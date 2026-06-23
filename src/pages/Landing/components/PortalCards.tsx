@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Card, CardContent, Button } from '@mui/material';
+import { Box, Typography, Container, Button } from '@mui/material';
 import { Security as SecurityIcon, AccountCircle as CitizenIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,61 +7,58 @@ export default function PortalCards() {
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ py: 15, bgcolor: '#0f172a', position: 'relative' }}>
-      {/* Background glow */}
-      <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 600, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(56,189,248,0.1) 0%, rgba(15,23,42,0) 70%)', filter: 'blur(60px)', zIndex: 0 }} />
-
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Box sx={{ textAlign: 'center', mb: 8 }}>
-          <Typography variant="h3" sx={{ fontWeight: 800, color: 'white', mb: 2 }}>
-            Access Your Portal
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 600, mx: 'auto' }}>
-            Whether you are a citizen checking on a fine, or a traffic operator managing the city network.
-          </Typography>
+    <Box sx={{ py: 24, position: 'relative', overflow: 'hidden' }}>
+      <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
+        <Box sx={{ textAlign: 'center', mb: 10 }}>
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, type: 'spring' }}>
+            <Typography variant="h2" sx={{ fontWeight: 800, mb: 3, fontSize: { xs: '2.5rem', md: '4rem' } }}>
+              Access <span style={{ color: '#10b981' }}>Workspace</span>
+            </Typography>
+            <Typography sx={{ color: '#94a3b8', fontSize: '1.25rem', maxWidth: 500, mx: 'auto' }}>
+              Select your designated portal below. All sessions are secured with military-grade encryption.
+            </Typography>
+          </motion.div>
         </Box>
 
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, justifyContent: 'center', px: { xs: 0, md: 8 } }}>
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ flex: 1 }}>
-            <Card sx={{ 
-              height: '100%', bgcolor: 'rgba(30, 41, 59, 0.8)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 4,
-              transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-8px)', borderColor: 'primary.main', boxShadow: '0 12px 40px rgba(56, 189, 248, 0.15)' },
-              display: 'flex', flexDirection: 'column'
-            }}>
-              <CardContent sx={{ p: 5, flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <Box sx={{ p: 2, borderRadius: 4, bgcolor: 'rgba(56, 189, 248, 0.1)', color: 'primary.main', mb: 3 }}>
-                  <CitizenIcon sx={{ fontSize: 48 }} />
-                </Box>
-                <Typography variant="h4" sx={{ fontWeight: 800, mb: 2, color: 'white' }}>Citizen Portal</Typography>
-                <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4, flexGrow: 1 }}>
-                  Access your personal vehicle records, pay outstanding traffic fines securely, or submit dispute evidence for administrative review.
-                </Typography>
-                <Button variant="contained" size="large" fullWidth onClick={() => navigate('/citizen')} sx={{ py: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '1.1rem', boxShadow: 'none' }}>
-                  Enter Citizen Portal
-                </Button>
-              </CardContent>
-            </Card>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 6 }}>
+          {/* Citizen Portal */}
+          <motion.div initial={{ opacity: 0, y: 50, rotateY: -15 }} whileInView={{ opacity: 1, y: 0, rotateY: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, type: 'spring' }} style={{ perspective: 1000 }}>
+            <Box 
+              className="glass-panel"
+              sx={{ p: 6, borderRadius: 6, cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', height: '100%',
+                '&:hover': { transform: 'scale(1.05) translateY(-10px)', borderColor: 'rgba(56,189,248,0.5)', boxShadow: '0 30px 60px rgba(56,189,248,0.2)' }
+              }}
+              onClick={() => navigate('/citizen')}
+            >
+              <Box sx={{ width: 80, height: 80, borderRadius: 4, background: 'linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4, boxShadow: '0 10px 20px rgba(56,189,248,0.4)' }}>
+                <CitizenIcon sx={{ fontSize: 40 }} />
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#fff', mb: 2 }}>Public Portal</Typography>
+              <Typography sx={{ color: '#94a3b8', mb: 6, fontSize: '1.1rem', lineHeight: 1.6 }}>
+                Verify vehicle fines, download high-resolution evidence, and pay or dispute challans securely online.
+              </Typography>
+              <Button variant="contained" fullWidth sx={{ py: 2, fontSize: '1.1rem' }}>Enter Portal</Button>
+            </Box>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }} style={{ flex: 1 }}>
-            <Card sx={{ 
-              height: '100%', bgcolor: 'rgba(30, 41, 59, 0.8)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 4,
-              transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-8px)', borderColor: 'secondary.main', boxShadow: '0 12px 40px rgba(168, 85, 247, 0.15)' },
-              display: 'flex', flexDirection: 'column'
-            }}>
-              <CardContent sx={{ p: 5, flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <Box sx={{ p: 2, borderRadius: 4, bgcolor: 'rgba(168, 85, 247, 0.1)', color: 'secondary.main', mb: 3 }}>
-                  <SecurityIcon sx={{ fontSize: 48 }} />
-                </Box>
-                <Typography variant="h4" sx={{ fontWeight: 800, mb: 2, color: 'white' }}>Department Staff</Typography>
-                <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4, flexGrow: 1 }}>
-                  Secure access for Traffic Operators and Administrators. Manage cameras, process disputes, view analytics, and monitor live feeds.
-                </Typography>
-                <Button variant="contained" color="secondary" size="large" fullWidth onClick={() => navigate('/dashboard')} sx={{ py: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '1.1rem', boxShadow: 'none' }}>
-                  Staff Login
-                </Button>
-              </CardContent>
-            </Card>
+          {/* Staff Portal */}
+          <motion.div initial={{ opacity: 0, y: 50, rotateY: 15 }} whileInView={{ opacity: 1, y: 0, rotateY: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, type: 'spring', delay: 0.1 }} style={{ perspective: 1000 }}>
+            <Box 
+              className="glass-panel"
+              sx={{ p: 6, borderRadius: 6, cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', height: '100%',
+                '&:hover': { transform: 'scale(1.05) translateY(-10px)', borderColor: 'rgba(168,85,247,0.5)', boxShadow: '0 30px 60px rgba(168,85,247,0.2)' }
+              }}
+              onClick={() => navigate('/dashboard')}
+            >
+              <Box sx={{ width: 80, height: 80, borderRadius: 4, background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4, boxShadow: '0 10px 20px rgba(168,85,247,0.4)' }}>
+                <SecurityIcon sx={{ fontSize: 40 }} />
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, color: '#fff', mb: 2 }}>Staff Node</Typography>
+              <Typography sx={{ color: '#94a3b8', mb: 6, fontSize: '1.1rem', lineHeight: 1.6 }}>
+                Restricted access. Command the camera grid, analyze live metrics, and review citizen disputes.
+              </Typography>
+              <Button variant="contained" color="secondary" fullWidth sx={{ py: 2, fontSize: '1.1rem', background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)' }}>Authenticate</Button>
+            </Box>
           </motion.div>
         </Box>
       </Container>

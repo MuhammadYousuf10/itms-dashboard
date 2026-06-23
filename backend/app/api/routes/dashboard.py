@@ -44,11 +44,61 @@ def get_dashboard_stats(db: Session = Depends(get_db), current_user: User = Depe
         {"time": "20:00", "volume": 210},
     ]
 
+    # 6. Simulated Violation Types Breakdown
+    violation_types = [
+        {"name": "Speeding", "value": 45},
+        {"name": "Red Light", "value": 25},
+        {"name": "Illegal Parking", "value": 20},
+        {"name": "No Helmet", "value": 10},
+    ]
+
+    # 7. Simulated System Health
+    system_health = {
+        "edgeTpu": 82, # percentage
+        "cameraUptime": 98,
+        "dbLatency": 45 # ms
+    }
+
+    # 8. Simulated Live Feeds
+    live_feeds = [
+        {"id": "CAM-01", "location": "Main Highway Junc", "status": "Active", "fps": 30},
+        {"id": "CAM-02", "location": "Downtown Blvd", "status": "Active", "fps": 28},
+        {"id": "CAM-03", "location": "Airport Road", "status": "Active", "fps": 30},
+        {"id": "CAM-04", "location": "Industrial Park", "status": "Active", "fps": 31},
+    ]
+
+    # 9. Simulated Hotspots
+    hotspots = [
+        {"name": "Downtown Square", "intensity": 85},
+        {"name": "Westside Mall", "intensity": 60},
+        {"name": "Highway Exit 4", "intensity": 95},
+    ]
+
+    # 10. Quick Disputes Queue
+    quick_disputes = [
+        {"id": "CHL-9981", "plate": "XYZ-123", "reason": "Not my vehicle", "status": "PENDING"},
+        {"id": "CHL-9982", "plate": "ABC-999", "reason": "Hospital emergency", "status": "PENDING"},
+        {"id": "CHL-9983", "plate": "LMN-456", "reason": "Traffic light was broken", "status": "PENDING"},
+    ]
+
+    # 11. Revenue Forecast
+    revenue_forecast = {
+        "current": 450000,
+        "target": 600000,
+        "predicted": 620000
+    }
+
     return {
         "totalVehicles": 12458 + (total_cameras * 100), # Simulated
         "avgSpeed": 64,
         "violations": pending_violations,
         "challansIssued": total_challans,
         "recentViolations": recent_violations,
-        "chartData": chart_data
+        "chartData": chart_data,
+        "violationTypes": violation_types,
+        "systemHealth": system_health,
+        "liveFeeds": live_feeds,
+        "hotspots": hotspots,
+        "quickDisputes": quick_disputes,
+        "revenueForecast": revenue_forecast
     }

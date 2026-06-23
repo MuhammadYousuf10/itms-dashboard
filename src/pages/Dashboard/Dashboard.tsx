@@ -3,6 +3,12 @@ import { motion } from 'framer-motion';
 import StatCard from './components/StatCard';
 import TrafficChart from './components/TrafficChart';
 import RecentViolations from './components/RecentViolations';
+import SystemHealth from './components/SystemHealth';
+import ViolationTypeChart from './components/ViolationTypeChart';
+import LiveFeedWidget from './components/LiveFeedWidget';
+import HotspotMapWidget from './components/HotspotMapWidget';
+import QuickDisputesWidget from './components/QuickDisputesWidget';
+import RevenueForecastWidget from './components/RevenueForecastWidget';
 import { Speed as SpeedIcon, Warning as WarningIcon, DirectionsCar as CarIcon, Receipt as ReceiptIcon } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { axiosClient } from '../../api/axiosClient';
@@ -102,18 +108,65 @@ export default function Dashboard() {
           </Grid>
         </Box>
         
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, lg: 8 }}>
-            <motion.div variants={itemVariants}>
-              <TrafficChart data={data.chartData} />
-            </motion.div>
+        <Box sx={{ mt: 3 }}>
+          <Grid container spacing={3} alignItems="stretch">
+            <Grid size={{ xs: 12, lg: 8 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <TrafficChart data={data.chartData} />
+              </motion.div>
+            </Grid>
+            <Grid size={{ xs: 12, lg: 4 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <RecentViolations violations={data.recentViolations} />
+              </motion.div>
+            </Grid>
           </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <motion.div variants={itemVariants}>
-              <RecentViolations violations={data.recentViolations} />
-            </motion.div>
+        </Box>
+
+        <Box sx={{ mt: 3 }}>
+          <Grid container spacing={3} alignItems="stretch">
+            <Grid size={{ xs: 12, lg: 8 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <LiveFeedWidget feeds={data.liveFeeds} />
+              </motion.div>
+            </Grid>
+            <Grid size={{ xs: 12, lg: 4 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <QuickDisputesWidget disputes={data.quickDisputes} />
+              </motion.div>
+            </Grid>
           </Grid>
-        </Grid>
+        </Box>
+
+        <Box sx={{ mt: 3 }}>
+          <Grid container spacing={3} alignItems="stretch">
+            <Grid size={{ xs: 12, lg: 4 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <SystemHealth health={data.systemHealth} />
+              </motion.div>
+            </Grid>
+            <Grid size={{ xs: 12, lg: 4 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <ViolationTypeChart data={data.violationTypes} />
+              </motion.div>
+            </Grid>
+            <Grid size={{ xs: 12, lg: 4 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <RevenueForecastWidget forecast={data.revenueForecast} />
+              </motion.div>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Box sx={{ mt: 3 }}>
+          <Grid container spacing={3} alignItems="stretch">
+            <Grid size={{ xs: 12 }}>
+              <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                <HotspotMapWidget hotspots={data.hotspots} />
+              </motion.div>
+            </Grid>
+          </Grid>
+        </Box>
       </motion.div>
     </Box>
   );
