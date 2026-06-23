@@ -38,7 +38,15 @@ export default function ViolationTypeChart({ data }: { data: { name: string; val
                   boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
                 }}
               />
-              <Legend verticalAlign="bottom" height={36} iconType="circle" />
+              <Legend 
+                verticalAlign="bottom" 
+                iconType="circle" 
+                wrapperStyle={{ 
+                  fontSize: '0.75rem', 
+                  paddingTop: '20px',
+                  lineHeight: '20px'
+                }} 
+              />
             </PieChart>
           </ResponsiveContainer>
         </Box>

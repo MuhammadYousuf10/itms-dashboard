@@ -18,8 +18,13 @@ export default function CitizenLayout() {
                 ITMS Citizen Portal
               </Typography>
             </Box>
-            <Button variant="outlined" color="inherit" onClick={() => navigate('/')}>
-              Home
+            <Button 
+              variant="outlined" 
+              color="inherit" 
+              onClick={() => navigate('/')}
+              sx={{ borderColor: 'divider', textTransform: 'none', fontWeight: 600 }}
+            >
+              Back to Website
             </Button>
           </Toolbar>
         </Container>

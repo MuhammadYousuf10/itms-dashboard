@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography, Button } from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -9,6 +11,8 @@ interface AuthLayoutProps {
 }
 
 export default function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
+  const navigate = useNavigate();
+
   return (
     <Box
       sx={{
@@ -18,8 +22,23 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
         justifyContent: 'center',
         bgcolor: 'background.default',
         p: 2,
+        position: 'relative',
       }}
     >
+      <Button 
+        startIcon={<ArrowBackIcon />} 
+        onClick={() => navigate('/')}
+        sx={{ 
+          position: 'absolute', 
+          top: 24, 
+          left: 24, 
+          color: 'text.secondary',
+          '&:hover': { color: 'text.primary', bgcolor: 'transparent' }
+        }}
+      >
+        Back to Website
+      </Button>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
