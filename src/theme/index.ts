@@ -44,7 +44,7 @@ export const getTheme = (mode: PaletteMode) => {
       button: { textTransform: 'none', fontWeight: 600 },
     },
     shape: {
-      borderRadius: 16,
+      borderRadius: 8,
     },
     components: {
       MuiCssBaseline: {
@@ -70,7 +70,7 @@ export const getTheme = (mode: PaletteMode) => {
       MuiCard: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: 8,
             backgroundColor: isDark ? 'rgba(15, 23, 42, 0.4)' : 'rgba(255, 255, 255, 0.6)',
             backdropFilter: 'blur(20px)',
             border: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}`,
@@ -102,7 +102,7 @@ export const getTheme = (mode: PaletteMode) => {
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: 8,
             padding: '8px 24px',
             transition: 'all 0.3s ease',
           },

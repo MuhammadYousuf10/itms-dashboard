@@ -18,8 +18,10 @@ export default function LiveFeed() {
   const { data: cameras = [], isLoading: loading, error } = useQuery<Camera[], Error>({
     queryKey: ['cameras'],
     queryFn: async () => {
-      const response = await axiosClient.get('/cameras');
-      return response.data;
+      const response = await axiosClient.get('/cameras', {
+        params: { limit: 100 }
+      });
+      return response.data.items;
     },
     refetchInterval: 10000 // Refetch every 10 seconds for live feed
   });

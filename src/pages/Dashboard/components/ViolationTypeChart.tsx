@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography, Box, useTheme } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-export default function ViolationTypeChart({ data }: { data: any[] }) {
+export default function ViolationTypeChart({ data }: { data: { name: string; value: number }[] }) {
   const theme = useTheme();
 
   const COLORS = [

@@ -3,15 +3,23 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.camera import Camera
-from app.schemas.camera import Camera as CameraSchema, CameraCreate
+from app.schemas.camera import Camera as CameraSchema, CameraCreate, PaginatedCameras
 from app.api.deps import get_current_user
 from app.models.user import User
 
 router = APIRouter()
 
-@router.get("/", response_model=List[CameraSchema])
-def get_cameras(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return db.query(Camera).all()
+@router.get("/", response_model=PaginatedCameras)
+def get_cameras(skip: int = 0, limit: int = 100, search: str = None, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    query = db.query(Camera)
+    if search:
+        query = query.filter(
+            (Camera.id.ilike(f"%{search}%")) |
+            (Camera.name.ilike(f"%{search}%"))
+        )
+    total = query.count()
+    items = query.offset(skip).limit(limit).all()
+    return {"items": items, "total": total}
 
 @router.post("/", response_model=CameraSchema)
 def create_camera(camera_in: CameraCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

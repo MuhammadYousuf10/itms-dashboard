@@ -29,3 +29,9 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user: User
+
+from typing import List
+
+class PaginatedUsers(BaseModel):
+    items: List[User]
+    total: int

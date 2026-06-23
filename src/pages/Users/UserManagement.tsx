@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { 
-  Box, Typography, Card, Table, TableBody, TableCell, TableContainer, 
-  TableHead, TableRow, Chip, IconButton, Menu, MenuItem, CircularProgress,
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button
+  Box, Typography, Chip, IconButton, Menu, MenuItem, CircularProgress,
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, InputAdornment
 } from '@mui/material';
+import { Search as SearchIcon } from '@mui/icons-material';
+import DataTable from '../../components/common/DataTable';
+import type { Column } from '../../components/common/DataTable';
 import { 
   MoreVert as MoreVertIcon, 
   AdminPanelSettings as AdminIcon,
@@ -15,9 +17,9 @@ import {
 } from '@mui/icons-material';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosClient } from '../../api/axiosClient';
-import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useEffect } from 'react';
 
 interface User {
   id: string;
@@ -35,10 +37,25 @@ export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [dialogConfig, setDialogConfig] = useState<{ open: boolean, type: 'suspend' | 'delete' | null }>({ open: false, type: null });
 
-  const { data: users = [], isLoading } = useQuery<User[]>({
-    queryKey: ['users'],
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+      setPage(0);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
+
+  const { data, isLoading } = useQuery<{items: User[], total: number}>({
+    queryKey: ['users', page, rowsPerPage, debouncedSearch],
     queryFn: async () => {
-      const res = await axiosClient.get('/users/');
+      const res = await axiosClient.get('/users/', {
+        params: { skip: page * rowsPerPage, limit: rowsPerPage, search: debouncedSearch || undefined }
+      });
       return res.data;
     },
     enabled: currentUser?.role?.toUpperCase() === 'ADMIN'
@@ -54,8 +71,9 @@ export default function UserManagement() {
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to update user');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Failed to update user');
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     }
@@ -71,8 +89,9 @@ export default function UserManagement() {
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to delete user');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Failed to delete user');
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     }
@@ -118,15 +137,55 @@ export default function UserManagement() {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0 }
-  };
+  const columns: Column<User>[] = [
+    { id: 'full_name', label: 'Name', minWidth: 150, format: (value) => <Typography sx={{ fontWeight: 500 }}>{String(value)}</Typography> },
+    { id: 'email', label: 'Email Address', minWidth: 200, format: (value) => <Typography sx={{ color: 'text.secondary' }}>{String(value)}</Typography> },
+    {
+      id: 'role',
+      label: 'Role',
+      minWidth: 120,
+      format: (value: unknown) => {
+        const role = value as string;
+        return (
+          <Chip 
+            icon={role === 'ADMIN' ? <AdminIcon fontSize="small" /> : <PersonIcon fontSize="small" />}
+            label={role} 
+            color={role === 'ADMIN' ? 'primary' : 'default'} 
+            size="small" 
+            variant="outlined"
+            sx={{ fontWeight: 600, borderWidth: 2 }} 
+          />
+        );
+      }
+    },
+    {
+      id: 'is_active',
+      label: 'Status',
+      minWidth: 120,
+      format: (value: unknown) => {
+        const isActive = value as boolean;
+        return (
+          <Chip 
+            label={isActive ? 'Active' : 'Suspended'} 
+            color={isActive ? 'success' : 'error'} 
+            size="small" 
+            sx={{ fontWeight: 600 }} 
+          />
+        );
+      }
+    },
+    {
+      id: 'actions',
+      label: 'Actions',
+      align: 'right',
+      minWidth: 80,
+      format: (_, row: User) => (
+        <IconButton size="small" onClick={(e) => handleOpenMenu(e, row)}>
+          <MoreVertIcon fontSize="small" />
+        </IconButton>
+      )
+    }
+  ];
 
   if (currentUser?.role?.toUpperCase() !== 'ADMIN') {
     return (
@@ -144,75 +203,52 @@ export default function UserManagement() {
 
   return (
     <Box sx={{ flexGrow: 1, py: 2 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}>
-          Team & Access Management
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Manage operator accounts, assign roles, and revoke access
-        </Typography>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}>
+            Team & Access Management
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Manage operator accounts, assign roles, and revoke access
+          </Typography>
+        </Box>
+        <TextField
+          variant="outlined"
+          placeholder="Search name, email..."
+          size="small"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" fontSize="small" />
+                </InputAdornment>
+              ),
+            }
+          }}
+          sx={{ width: 300 }}
+        />
       </Box>
 
-      <Card sx={{ border: 1, borderColor: 'divider', boxShadow: 'none', borderRadius: 3 }}>
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ bgcolor: 'background.default' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Email Address</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Role</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 600 }}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody component={motion.tbody} variants={containerVariants} initial="hidden" animate="show">
-                {users.map((user) => (
-                  <TableRow 
-                    key={user.id} 
-                    component={motion.tr} 
-                    variants={itemVariants}
-                    hover
-                  >
-                    <TableCell sx={{ fontWeight: 500 }}>{user.full_name}</TableCell>
-                    <TableCell sx={{ color: 'text.secondary' }}>{user.email}</TableCell>
-                    <TableCell>
-                      <Chip 
-                        icon={user.role === 'ADMIN' ? <AdminIcon fontSize="small" /> : <PersonIcon fontSize="small" />}
-                        label={user.role} 
-                        color={user.role === 'ADMIN' ? 'primary' : 'default'} 
-                        size="small" 
-                        variant="outlined"
-                        sx={{ fontWeight: 600, borderWidth: 2 }} 
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={user.is_active ? 'Active' : 'Suspended'} 
-                        color={user.is_active ? 'success' : 'error'} 
-                        size="small" 
-                        sx={{ fontWeight: 600 }} 
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton 
-                        size="small" 
-                        onClick={(e) => handleOpenMenu(e, user)}
-                      >
-                        <MoreVertIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Card>
+      {isLoading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={data?.items || []}
+          totalCount={data?.total || 0}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10));
+            setPage(0);
+          }}
+        />
+      )}
 
       <Menu
         anchorEl={anchorEl}

@@ -23,7 +23,7 @@ export default function ForgotPassword() {
     try {
       await axiosClient.post(`/auth/forgot-password?email=${encodeURIComponent(data.email)}`);
       setIsSubmitted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Forgot password error", err);
       // We still show submitted to prevent email enumeration
       setIsSubmitted(true);

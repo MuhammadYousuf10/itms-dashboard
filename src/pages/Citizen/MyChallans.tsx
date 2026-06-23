@@ -73,8 +73,9 @@ export default function MyChallans() {
       toast.success('Payment successful! Receipt generated.');
       setDialogType(null);
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Payment failed');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Payment failed');
     }
   });
 
@@ -89,8 +90,9 @@ export default function MyChallans() {
       setDisputeReason('');
       setEvidenceFile(null);
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to submit dispute');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Failed to submit dispute');
     }
   });
 
@@ -109,7 +111,7 @@ export default function MyChallans() {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         evidence_url = uploadRes.data.url;
-      } catch (error) {
+      } catch (_error) {
         toast.error('Failed to upload evidence image.');
         setIsUploading(false);
         return;

@@ -17,3 +17,9 @@ class Camera(CameraBase):
 
     class Config:
         from_attributes = True
+
+from typing import List
+
+class PaginatedCameras(BaseModel):
+    items: List[Camera]
+    total: int

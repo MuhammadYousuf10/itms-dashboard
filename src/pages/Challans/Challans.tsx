@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Chip, CircularProgress, IconButton, Menu, MenuItem,
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Tooltip
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Tooltip, InputAdornment
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import WarningIcon from '@mui/icons-material/Warning';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -50,24 +51,43 @@ export default function Challans() {
   const [dialogConfig, setDialogConfig] = useState<{ open: boolean, type: DialogType }>({ open: false, type: null });
   const [cancelReason, setCancelReason] = useState('');
 
-  const { data = [], isLoading: loading, error } = useQuery<ChallanRow[], Error>({
-    queryKey: ['challans'],
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+      setPage(0); // Reset to page 0 on new search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
+
+  const { data, isLoading: loading, error } = useQuery<{items: ChallanRow[], total: number}, Error>({
+    queryKey: ['challans', page, rowsPerPage, debouncedSearch],
     queryFn: async () => {
-      const response = await axiosClient.get('/challans');
-      return response.data.map((item: any) => ({
-        id: item.id,
-        plate: item.vehicle_plate,
-        violationType: item.violation_type,
-        cameraId: item.camera_id,
-        fineAmount: item.fine_amount,
-        status: item.status,
-        date: new Date(item.date_issued).toLocaleDateString(),
-        cancellationReason: item.cancellation_reason,
-        disputeReason: item.dispute_reason,
-        disputeEvidenceUrl: item.dispute_evidence_url
-      }));
+      const response = await axiosClient.get('/challans', {
+        params: { skip: page * rowsPerPage, limit: rowsPerPage, search: debouncedSearch || undefined }
+      });
+      return {
+        items: response.data.items.map((item: any) => ({
+          id: item.id,
+          plate: item.vehicle_plate,
+          violationType: item.violation_type,
+          cameraId: item.camera_id,
+          fineAmount: item.fine_amount,
+          status: item.status,
+          date: new Date(item.date_issued).toLocaleDateString(),
+          cancellationReason: item.cancellation_reason,
+          disputeReason: item.dispute_reason,
+          disputeEvidenceUrl: item.dispute_evidence_url
+        })),
+        total: response.data.total
+      };
     }
   });
+
+  const tableData = data?.items || [];
+  const totalCount = data?.total || 0;
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string, status: string }) => {
@@ -79,8 +99,9 @@ export default function Challans() {
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to update challan');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Action failed');
     }
   });
 
@@ -94,8 +115,9 @@ export default function Challans() {
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to delete challan');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Failed to delete challan');
     }
   });
 
@@ -110,8 +132,9 @@ export default function Challans() {
       setCancelReason('');
       handleCloseMenu();
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to request cancellation');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Failed to request cancellation');
     }
   });
 
@@ -125,8 +148,9 @@ export default function Challans() {
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to approve');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Failed to approve');
     }
   });
 
@@ -140,8 +164,9 @@ export default function Challans() {
       setDialogConfig({ open: false, type: null });
       handleCloseMenu();
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.detail || 'Failed to reject');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { detail?: string } } };
+      toast.error(error.response?.data?.detail || 'Failed to reject');
     }
   });
 
@@ -256,13 +281,32 @@ export default function Challans() {
 
   return (
     <Box sx={{ flexGrow: 1, py: 2 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}>
-          Challans Management
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          View and manage all issued traffic violation tickets
-        </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}>
+            Challans Management
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            View and manage all issued traffic violation tickets
+          </Typography>
+        </Box>
+        <TextField
+          variant="outlined"
+          placeholder="Search plate, violation, ID..."
+          size="small"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" fontSize="small" />
+                </InputAdornment>
+              ),
+            }
+          }}
+          sx={{ width: 300 }}
+        />
       </Box>
 
       {loading ? (
@@ -272,8 +316,8 @@ export default function Challans() {
       ) : (
         <DataTable
           columns={columns}
-          data={data}
-          totalCount={data.length}
+          data={tableData}
+          totalCount={totalCount}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}

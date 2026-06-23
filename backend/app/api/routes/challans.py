@@ -3,15 +3,24 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.challan import Challan
-from app.schemas.challan import Challan as ChallanSchema, ChallanCreate
+from app.schemas.challan import Challan as ChallanSchema, ChallanCreate, PaginatedChallans
 from app.api.deps import get_current_user
 from app.models.user import User
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ChallanSchema])
-def get_challans(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return db.query(Challan).order_by(Challan.date_issued.desc()).offset(skip).limit(limit).all()
+@router.get("/", response_model=PaginatedChallans)
+def get_challans(skip: int = 0, limit: int = 100, search: str = None, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    query = db.query(Challan)
+    if search:
+        query = query.filter(
+            (Challan.vehicle_plate.ilike(f"%{search}%")) |
+            (Challan.id.ilike(f"%{search}%")) |
+            (Challan.violation_type.ilike(f"%{search}%"))
+        )
+    total = query.count()
+    items = query.order_by(Challan.date_issued.desc()).offset(skip).limit(limit).all()
+    return {"items": items, "total": total}
 
 @router.post("/", response_model=ChallanSchema)
 def create_challan(challan_in: ChallanCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

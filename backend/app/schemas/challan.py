@@ -22,3 +22,9 @@ class Challan(ChallanBase):
 
     class Config:
         from_attributes = True
+
+from typing import List
+
+class PaginatedChallans(BaseModel):
+    items: List[Challan]
+    total: int

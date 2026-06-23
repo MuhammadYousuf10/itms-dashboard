@@ -6,6 +6,9 @@ from app.db.database import get_db
 from app.models.vehicle import Vehicle
 from app.models.challan import Challan, ChallanStatus
 from app.schemas.challan import Challan as ChallanSchema
+from app.core.security import create_access_token
+from app.api.deps import get_current_citizen
+from app.models.payment import Payment
 
 router = APIRouter()
 
@@ -29,19 +32,20 @@ def verify_citizen(data: VerifyRequest, db: Session = Depends(get_db)):
     if vehicle.chassis_number[-5:] != data.chassis_last_5:
         raise HTTPException(status_code=400, detail="Invalid chassis number")
         
-    # Generate a dummy token for prototype purposes
-    dummy_token = f"CITIZEN_TOKEN_{vehicle.id}"
+    # Generate a real JWT token
+    access_token = create_access_token(data={"sub": vehicle.id, "type": "citizen"})
     
     return {
         "success": True,
-        "token": dummy_token,
+        "token": access_token,
         "vehicle_id": vehicle.id,
         "owner_name": vehicle.owner_name
     }
 
 @router.get("/challans/{plate_number}", response_model=List[ChallanSchema])
-def get_citizen_challans(plate_number: str, db: Session = Depends(get_db)):
-    # In a real app, we would verify the JWT token here to ensure it matches the plate
+def get_citizen_challans(plate_number: str, db: Session = Depends(get_db), current_citizen: Vehicle = Depends(get_current_citizen)):
+    if current_citizen.plate_number != plate_number:
+        raise HTTPException(status_code=403, detail="Not authorized to view these challans")
     return db.query(Challan).filter(Challan.vehicle_plate == plate_number).order_by(Challan.date_issued.desc()).all()
 
 class DisputeRequest(BaseModel):
@@ -65,15 +69,25 @@ def dispute_challan(challan_id: str, data: DisputeRequest, db: Session = Depends
     return challan
 
 @router.post("/challans/{challan_id}/pay", response_model=ChallanSchema)
-def pay_challan_mock(challan_id: str, db: Session = Depends(get_db)):
+def pay_challan(challan_id: str, db: Session = Depends(get_db), current_citizen: Vehicle = Depends(get_current_citizen)):
     challan = db.query(Challan).filter(Challan.id == challan_id).first()
     if not challan:
         raise HTTPException(status_code=404, detail="Challan not found")
+        
+    if challan.vehicle_id != current_citizen.id and challan.vehicle_plate != current_citizen.plate_number:
+        raise HTTPException(status_code=403, detail="Not authorized to pay this challan")
         
     if challan.status not in [ChallanStatus.PENDING, ChallanStatus.WARNING]:
         raise HTTPException(status_code=400, detail="Challan cannot be paid")
         
     challan.status = ChallanStatus.PAID
+    
+    # Record the payment
+    payment = Payment(
+        challan_id=challan.id,
+        amount=challan.fine_amount
+    )
+    db.add(payment)
     db.commit()
     db.refresh(challan)
     return challan

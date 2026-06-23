@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.user import User, UserRole
-from app.schemas.user import User as UserSchema, UserUpdate
+from app.schemas.user import User as UserSchema, UserUpdate, PaginatedUsers
 from app.api.deps import get_current_user
 
 router = APIRouter()
@@ -14,15 +14,27 @@ def get_current_admin(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="Not enough permissions")
     return current_user
 
-@router.get("/", response_model=List[UserSchema])
+@router.get("/", response_model=PaginatedUsers)
 def get_users(
+    skip: int = 0,
+    limit: int = 100,
+    search: str = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_admin)
 ):
     """
     Retrieve all users. Only accessible by admins.
     """
-    return db.query(User).all()
+    query = db.query(User)
+    if search:
+        query = query.filter(
+            (User.email.ilike(f"%{search}%")) |
+            (User.full_name.ilike(f"%{search}%")) |
+            (User.id.ilike(f"%{search}%"))
+        )
+    total = query.count()
+    items = query.offset(skip).limit(limit).all()
+    return {"items": items, "total": total}
 
 @router.patch("/{user_id}", response_model=UserSchema)
 def update_user(

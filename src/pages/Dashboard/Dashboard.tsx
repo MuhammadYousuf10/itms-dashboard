@@ -109,7 +109,7 @@ export default function Dashboard() {
         </Box>
         
         <Box sx={{ mt: 3 }}>
-          <Grid container spacing={3} alignItems="stretch">
+          <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
             <Grid size={{ xs: 12, lg: 8 }}>
               <motion.div variants={itemVariants} style={{ height: '100%' }}>
                 <TrafficChart data={data.chartData} />
@@ -124,7 +124,7 @@ export default function Dashboard() {
         </Box>
 
         <Box sx={{ mt: 3 }}>
-          <Grid container spacing={3} alignItems="stretch">
+          <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
             <Grid size={{ xs: 12, lg: 8 }}>
               <motion.div variants={itemVariants} style={{ height: '100%' }}>
                 <LiveFeedWidget feeds={data.liveFeeds} />
@@ -139,7 +139,7 @@ export default function Dashboard() {
         </Box>
 
         <Box sx={{ mt: 3 }}>
-          <Grid container spacing={3} alignItems="stretch">
+          <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
             <Grid size={{ xs: 12, lg: 4 }}>
               <motion.div variants={itemVariants} style={{ height: '100%' }}>
                 <SystemHealth health={data.systemHealth} />
@@ -159,7 +159,7 @@ export default function Dashboard() {
         </Box>
 
         <Box sx={{ mt: 3 }}>
-          <Grid container spacing={3} alignItems="stretch">
+          <Grid container spacing={3} sx={{ alignItems: 'stretch' }}>
             <Grid size={{ xs: 12 }}>
               <motion.div variants={itemVariants} style={{ height: '100%' }}>
                 <HotspotMapWidget hotspots={data.hotspots} />

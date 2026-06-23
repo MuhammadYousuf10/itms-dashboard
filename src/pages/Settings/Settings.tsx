@@ -11,7 +11,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 export default function Settings() {
   const user = useAuthStore((state) => state.user);
 
-  const { control, handleSubmit } = useForm<z.input<typeof settingsSchema>, any, SettingsFormValues>({
+  const { control, handleSubmit } = useForm<z.input<typeof settingsSchema>, unknown, SettingsFormValues>({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
       fullName: user?.name || 'Admin User',
