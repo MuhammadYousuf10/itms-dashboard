@@ -9,75 +9,13 @@ import Login from '../pages/Auth/Login';
 import SignUp from '../pages/Auth/SignUp';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
 
-// Dashboard Components
-import { Box, Grid } from '@mui/material';
-import StatCard from '../pages/Dashboard/components/StatCard';
-import TrafficChartPlaceholder from '../pages/Dashboard/components/TrafficChartPlaceholder';
-import RecentViolationsPlaceholder from '../pages/Dashboard/components/RecentViolationsPlaceholder';
-import { Speed as SpeedIcon, Warning as WarningIcon, DirectionsCar as CarIcon, Receipt as ReceiptIcon } from '@mui/icons-material';
+// Dashboard Pages
+import Dashboard from '../pages/Dashboard/Dashboard';
+import LiveFeed from '../pages/LiveFeed/LiveFeed';
+import Challans from '../pages/Challans/Challans';
+import Settings from '../pages/Settings/Settings';
 
 import ProtectedRoute from './ProtectedRoute';
-
-// Temporary Dashboard Component (extracted from App.tsx)
-function DashboardView() {
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Box sx={{ mb: 4, mt: 2 }}>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <StatCard 
-              title="Total Vehicles" 
-              value="12,458" 
-              icon={<CarIcon sx={{ fontSize: 32 }} />} 
-              color="primary"
-              trend="+12%"
-              isPositive={true}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <StatCard 
-              title="Avg Speed" 
-              value="64 km/h" 
-              icon={<SpeedIcon sx={{ fontSize: 32 }} />} 
-              color="success"
-              trend="-2.4%"
-              isPositive={true}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <StatCard 
-              title="Violations" 
-              value="142" 
-              icon={<WarningIcon sx={{ fontSize: 32 }} />} 
-              color="warning"
-              trend="+18%"
-              isPositive={false}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-            <StatCard 
-              title="Challans Issued" 
-              value="128" 
-              icon={<ReceiptIcon sx={{ fontSize: 32 }} />} 
-              color="error"
-              trend="+15%"
-              isPositive={false}
-            />
-          </Grid>
-        </Grid>
-      </Box>
-      
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, lg: 8 }}>
-          <TrafficChartPlaceholder />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <RecentViolationsPlaceholder />
-        </Grid>
-      </Grid>
-    </Box>
-  );
-}
 
 export default function AppRouter() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -105,11 +43,34 @@ export default function AppRouter() {
             path="/" 
             element={
               <MainLayout>
-                <DashboardView />
+                <Dashboard />
               </MainLayout>
             } 
           />
-          {/* Add more protected routes here (e.g., /live, /challans) */}
+          <Route 
+            path="/live" 
+            element={
+              <MainLayout>
+                <LiveFeed />
+              </MainLayout>
+            } 
+          />
+          <Route 
+            path="/challans" 
+            element={
+              <MainLayout>
+                <Challans />
+              </MainLayout>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <MainLayout>
+                <Settings />
+              </MainLayout>
+            } 
+          />
         </Route>
 
         {/* Fallback */}

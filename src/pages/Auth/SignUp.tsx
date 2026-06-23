@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Button, Typography, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -6,14 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import AuthLayout from '../../layouts/AuthLayout';
 import FormInput from '../../components/common/FormInput';
-
-const signUpSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
-
-type SignUpFormValues = z.infer<typeof signUpSchema>;
+import { signUpSchema, type SignUpFormValues } from '../../schemas/auth';
 
 export default function SignUp() {
   const navigate = useNavigate();

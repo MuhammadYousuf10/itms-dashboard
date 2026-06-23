@@ -1,12 +1,11 @@
-import React from 'react';
 import { Card, Box, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
 import { DirectionsCar as CarIcon } from '@mui/icons-material';
 
 const recentViolations = [
-  { id: 'V-892', plate: 'ABC 1234', speed: '85 km/h', limit: '60', time: '2 mins ago', color: '#EF4444' }, // Red
-  { id: 'V-891', plate: 'XYZ 9876', speed: '72 km/h', limit: '60', time: '14 mins ago', color: '#F59E0B' }, // Amber
-  { id: 'V-890', plate: 'LMN 4567', speed: '91 km/h', limit: '60', time: '28 mins ago', color: '#EF4444' }, // Red
-  { id: 'V-889', plate: 'PQR 3456', speed: '68 km/h', limit: '60', time: '45 mins ago', color: '#F59E0B' }, // Amber
+  { id: 'V-892', plate: 'ABC 1234', speed: '85 km/h', limit: '60', time: '2 mins ago', color: 'error.main' },
+  { id: 'V-891', plate: 'XYZ 9876', speed: '72 km/h', limit: '60', time: '14 mins ago', color: 'warning.main' },
+  { id: 'V-890', plate: 'LMN 4567', speed: '91 km/h', limit: '60', time: '28 mins ago', color: 'error.main' },
+  { id: 'V-889', plate: 'PQR 3456', speed: '68 km/h', limit: '60', time: '45 mins ago', color: 'warning.main' },
 ];
 
 export default function RecentViolationsPlaceholder() {
@@ -21,7 +20,7 @@ export default function RecentViolationsPlaceholder() {
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box>
-          <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.5 }}>
+          <Typography variant="h6" sx={{ color: 'text.primary', mb: 0.5 }}>
             Recent Violations
           </Typography>
           <Typography variant="body2" color="text.secondary">
@@ -40,7 +39,8 @@ export default function RecentViolationsPlaceholder() {
             sx={{ 
               px: 0,
               py: 2,
-              borderBottom: index < recentViolations.length - 1 ? '1px solid #F1F5F9' : 'none'
+              borderBottom: index < recentViolations.length - 1 ? 1 : 0,
+              borderColor: 'divider'
             }}
           >
             <ListItemAvatar>
@@ -52,7 +52,7 @@ export default function RecentViolationsPlaceholder() {
               disableTypography
               primary={
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1E293B' }}>
+                  <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                     {violation.plate}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>

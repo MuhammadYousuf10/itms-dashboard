@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Button, Typography, Link, Checkbox, FormControlLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -7,15 +7,7 @@ import * as z from 'zod';
 import AuthLayout from '../../layouts/AuthLayout';
 import FormInput from '../../components/common/FormInput';
 import { useAuthStore } from '../../store/useAuthStore';
-
-// 1. Define the validation schema using Zod
-const loginSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
-// Infer the TypeScript type from the schema
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { loginSchema, type LoginFormValues } from '../../schemas/auth';
 
 export default function Login() {
   const navigate = useNavigate();

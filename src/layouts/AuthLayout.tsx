@@ -15,7 +15,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        bgcolor: '#F8F9FA', // Aurora light background
+        bgcolor: 'background.default',
         p: 2,
       }}
     >
@@ -27,7 +27,8 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
           maxWidth: 480,
           borderRadius: 4,
           boxShadow: '0px 10px 40px rgba(0, 0, 0, 0.04)',
-          border: '1px solid #F1F5F9',
+          border: 1,
+          borderColor: 'divider',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 4, justifyContent: 'center' }}>
@@ -39,12 +40,12 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
               background: 'linear-gradient(135deg, #00D4B2 0%, #3B82F6 100%)',
             }}
           />
-          <Typography variant="h5" sx={{ fontWeight: 800, color: '#1E293B', letterSpacing: '-0.5px' }}>
+          <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: '-0.5px' }}>
             ITMS Pro
           </Typography>
         </Box>
 
-        <Typography variant="h4" sx={{ fontWeight: 700, color: '#1E293B', mb: 1, textAlign: 'center' }}>
+        <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 1, textAlign: 'center' }}>
           {title}
         </Typography>
         

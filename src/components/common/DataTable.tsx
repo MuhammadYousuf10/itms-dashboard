@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode, ChangeEvent } from 'react';
 import { 
   Paper, 
   Table, 
@@ -16,7 +16,7 @@ export interface Column<T> {
   label: string;
   minWidth?: number;
   align?: 'right' | 'left' | 'center';
-  format?: (value: unknown, row: T) => React.ReactNode;
+  format?: (value: unknown, row: T) => ReactNode;
 }
 
 interface DataTableProps<T> {
@@ -26,7 +26,7 @@ interface DataTableProps<T> {
   rowsPerPage: number;
   totalCount: number;
   onPageChange: (event: unknown, newPage: number) => void;
-  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRowsPerPageChange: (event: ChangeEvent<HTMLInputElement>) => void;
   isLoading?: boolean;
 }
 
@@ -42,7 +42,7 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 'none', border: '1px solid #E2E8F0' }}>
+    <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 'none', border: 1, borderColor: 'divider' }}>
       <TableContainer sx={{ maxHeight: 600 }}>
         <Table stickyHeader aria-label="data table">
           <TableHead>
@@ -53,10 +53,11 @@ export default function DataTable<T>({
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                   sx={{ 
-                    bgcolor: '#F8F9FA', 
-                    color: '#64748B', 
+                    bgcolor: 'background.default', 
+                    color: 'text.secondary', 
                     fontWeight: 600,
-                    borderBottom: '1px solid #E2E8F0'
+                    borderBottom: 1,
+                    borderColor: 'divider'
                   }}
                 >
                   {column.label}
@@ -84,7 +85,7 @@ export default function DataTable<T>({
                     {columns.map((column) => {
                       const value = row[column.id as keyof T];
                       return (
-                        <TableCell key={String(column.id)} align={column.align} sx={{ borderBottom: '1px solid #F1F5F9' }}>
+                        <TableCell key={String(column.id)} align={column.align} sx={{ borderBottom: 1, borderColor: 'divider' }}>
                           {column.format ? column.format(value, row) : value}
                         </TableCell>
                       );
@@ -104,7 +105,7 @@ export default function DataTable<T>({
         page={page}
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
-        sx={{ borderTop: '1px solid #E2E8F0' }}
+        sx={{ borderTop: 1, borderColor: 'divider' }}
       />
     </Paper>
   );

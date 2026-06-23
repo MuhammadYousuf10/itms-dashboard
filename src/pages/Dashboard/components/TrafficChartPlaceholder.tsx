@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, Box, Typography } from '@mui/material';
 
 export default function TrafficChartPlaceholder() {
@@ -12,7 +11,7 @@ export default function TrafficChartPlaceholder() {
       }}
     >
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.5 }}>
+        <Typography variant="h6" sx={{ color: 'text.primary', mb: 0.5 }}>
           Traffic Volume Analysis
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -25,7 +24,7 @@ export default function TrafficChartPlaceholder() {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center',
-          bgcolor: '#F8F9FA',
+          bgcolor: 'background.default',
           borderRadius: 2,
         }}
       >
