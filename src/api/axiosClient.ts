@@ -30,6 +30,8 @@ axiosClient.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       // Clear token and force logout on 401 Unauthorized
       useAuthStore.getState().logout();
+      localStorage.clear();
+      sessionStorage.clear();
       window.location.href = '/login';
     }
     return Promise.reject(error);

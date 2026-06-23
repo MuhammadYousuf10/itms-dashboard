@@ -8,7 +8,14 @@ class Settings(BaseSettings):
     
     SQLALCHEMY_DATABASE_URI: str = "sqlite:///./itms.db"
 
+    # Email Settings
+    SMTP_HOST: str | None = None
+    SMTP_PORT: int = 587
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+
     class Config:
         case_sensitive = True
+        env_file = ".env"
 
 settings = Settings()

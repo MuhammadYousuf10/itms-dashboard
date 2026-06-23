@@ -8,6 +8,10 @@ from app.db.database import Base
 class ChallanStatus(str, enum.Enum):
     PENDING = "PENDING"
     PAID = "PAID"
+    WARNING = "WARNING"
+    CANCELLED = "CANCELLED"
+    CANCELLATION_REQUESTED = "CANCELLATION_REQUESTED"
+    DISPUTED = "DISPUTED"
 
 class Challan(Base):
     __tablename__ = "challans"
@@ -19,6 +23,12 @@ class Challan(Base):
     status = Column(Enum(ChallanStatus), default=ChallanStatus.PENDING, nullable=False)
     
     camera_id = Column(String, ForeignKey("cameras.id"), nullable=False)
+    vehicle_id = Column(String, ForeignKey("vehicles.id"), nullable=True)
+    
     date_issued = Column(DateTime, default=datetime.utcnow, nullable=False)
+    cancellation_reason = Column(String, nullable=True)
+    dispute_reason = Column(String, nullable=True)
+    dispute_evidence_url = Column(String, nullable=True)
 
     camera = relationship("Camera")
+    vehicle = relationship("Vehicle")

@@ -1,8 +1,8 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, type PaletteMode } from '@mui/material/styles';
 
-const theme = createTheme({
+export const getTheme = (mode: PaletteMode) => createTheme({
   palette: {
-    mode: 'light',
+    mode,
     primary: {
       main: '#3B82F6', // Blue for buttons/accents
       light: '#60A5FA',
@@ -15,29 +15,29 @@ const theme = createTheme({
       dark: '#00947C',
     },
     background: {
-      default: '#F8F9FA', // Very soft grey background
-      paper: '#FFFFFF', // Clean white cards
+      default: mode === 'light' ? '#F8F9FA' : '#0B1120',
+      paper: mode === 'light' ? '#FFFFFF' : '#1E293B',
     },
     text: {
-      primary: '#1E293B', // Dark slate for main text
-      secondary: '#64748B', // Grey for subtitles
+      primary: mode === 'light' ? '#1E293B' : '#F8FAFC',
+      secondary: mode === 'light' ? '#64748B' : '#94A3B8',
     },
     error: { main: '#EF4444' }, 
     warning: { main: '#F59E0B' }, 
     success: { main: '#10B981' }, 
     info: { main: '#3B82F6' },
-    divider: '#E2E8F0', // Light borders
+    divider: mode === 'light' ? '#E2E8F0' : '#334155',
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h1: { fontWeight: 700, color: '#0F172A' },
-    h2: { fontWeight: 700, color: '#0F172A' },
-    h3: { fontWeight: 700, color: '#0F172A' },
-    h4: { fontWeight: 600, color: '#0F172A' },
-    h5: { fontWeight: 600, color: '#0F172A' },
-    h6: { fontWeight: 600, color: '#0F172A' },
-    subtitle1: { color: '#64748B' },
-    subtitle2: { color: '#64748B', fontWeight: 500 },
+    h1: { fontWeight: 700 },
+    h2: { fontWeight: 700 },
+    h3: { fontWeight: 700 },
+    h4: { fontWeight: 600 },
+    h5: { fontWeight: 600 },
+    h6: { fontWeight: 600 },
+    subtitle1: { color: mode === 'light' ? '#64748B' : '#94A3B8' },
+    subtitle2: { color: mode === 'light' ? '#64748B' : '#94A3B8', fontWeight: 500 },
     button: { textTransform: 'none', fontWeight: 500 },
   },
   shape: {
@@ -50,7 +50,8 @@ const theme = createTheme({
           box-sizing: border-box;
         }
         body {
-          background-color: #F8F9FA;
+          background-color: ${mode === 'light' ? '#F8F9FA' : '#0B1120'};
+          transition: background-color 0.3s ease;
         }
       `,
     },
@@ -58,8 +59,8 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.03)', // Extremely soft shadow
-          border: '1px solid #F1F5F9', // Subtle border
+          boxShadow: mode === 'light' ? '0px 4px 20px rgba(0, 0, 0, 0.03)' : '0px 4px 20px rgba(0, 0, 0, 0.4)',
+          border: `1px solid ${mode === 'light' ? '#F1F5F9' : '#334155'}`,
         },
       },
     },
@@ -67,16 +68,17 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 16,
-          boxShadow: '0px 2px 12px rgba(0, 0, 0, 0.04)',
+          boxShadow: mode === 'light' ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : '0px 4px 20px rgba(0, 0, 0, 0.2)',
           border: 'none',
+          backgroundColor: mode === 'light' ? '#FFFFFF' : '#1E293B',
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#FFFFFF',
-          borderRight: '1px solid #E2E8F0',
+          backgroundColor: mode === 'light' ? '#FFFFFF' : '#0F172A',
+          borderRight: `1px solid ${mode === 'light' ? '#E2E8F0' : '#1E293B'}`,
           boxShadow: 'none',
         },
       },
@@ -84,9 +86,9 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#FFFFFF',
-          color: '#1E293B',
-          borderBottom: '1px solid #E2E8F0',
+          backgroundColor: mode === 'light' ? '#FFFFFF' : '#0F172A',
+          color: mode === 'light' ? '#1E293B' : '#F8FAFC',
+          borderBottom: `1px solid ${mode === 'light' ? '#E2E8F0' : '#1E293B'}`,
           boxShadow: 'none',
         },
       },
@@ -115,5 +117,3 @@ const theme = createTheme({
     }
   },
 });
-
-export default theme;

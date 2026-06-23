@@ -10,24 +10,35 @@ Follow these instructions to run the dashboard on your local machine.
 
 - **Node.js**: Ensure you have Node.js installed (v18 or higher is recommended, but Vite v5 is configured here for maximum compatibility with older versions like v22.1.0).
 
-### Installation & Running
+### 1. Backend Setup (FastAPI)
 
-1. **Open your terminal** and navigate to the project directory:
+1. Open a **new terminal window** and navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Activate the virtual environment:
+   - On Windows: `.\venv\Scripts\activate`
+   - On Mac/Linux: `source venv/bin/activate`
+3. Run the backend server:
+   ```bash
+   python -m uvicorn main:app --reload
+   ```
+
+### 2. Frontend Setup (React)
+
+1. **Open a separate terminal window** and navigate to the project root:
    ```bash
    cd itms-dashboard
    ```
-
-2. **Install the dependencies**:
+2. **Install dependencies**:
    ```bash
    npm install
    ```
-
 3. **Start the development server**:
    ```bash
    npm run dev
    ```
-
-4. **View the App**: Open your browser and navigate to the URL provided in the terminal (usually `http://localhost:5173`).
+4. **View the App**: Open `http://localhost:5173` in your browser.
 
 ---
 

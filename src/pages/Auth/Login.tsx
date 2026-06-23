@@ -3,12 +3,12 @@ import { Box, Button, Typography, Link, Checkbox, FormControlLabel } from '@mui/
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import AuthLayout from '../../layouts/AuthLayout';
 import FormInput from '../../components/common/FormInput';
 import { useAuthStore } from '../../store/useAuthStore';
 import { loginSchema, type LoginFormValues } from '../../schemas/auth';
 import { axiosClient } from '../../api/axiosClient';
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -19,8 +19,8 @@ export default function Login() {
   const { control, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'admin@itms.gov',
+      password: 'admin123',
     },
   });
 
@@ -48,10 +48,12 @@ export default function Login() {
         role: user.role.toLowerCase()
       });
       
+      toast.success('Successfully logged in');
       navigate('/');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Login failed:", error);
-      alert(error.response?.data?.detail || "Failed to sign in. Please check your credentials.");
+      toast.error(error.response?.data?.detail || "Failed to sign in. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }

@@ -3,10 +3,10 @@ import { Box, Button, Typography, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import AuthLayout from '../../layouts/AuthLayout';
 import FormInput from '../../components/common/FormInput';
 import { forgotPasswordSchema, type ForgotPasswordValues } from '../../schemas/auth';
+import { axiosClient } from '../../api/axiosClient';
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -20,12 +20,16 @@ export default function ForgotPassword() {
 
   const onSubmit = async (data: ForgotPasswordValues) => {
     setIsLoading(true);
-    // TODO: Connect to backend
-    console.log("Sending recovery to:", data);
-    setTimeout(() => {
+    try {
+      await axiosClient.post(`/auth/forgot-password?email=${encodeURIComponent(data.email)}`);
       setIsSubmitted(true);
+    } catch (err: any) {
+      console.error("Forgot password error", err);
+      // We still show submitted to prevent email enumeration
+      setIsSubmitted(true);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

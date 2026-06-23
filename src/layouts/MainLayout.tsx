@@ -1,4 +1,5 @@
-import { useState, cloneElement, ReactElement } from 'react';
+import { useState, cloneElement } from 'react';
+import type { ReactElement } from 'react';
 import {
   Box,
   Drawer,
@@ -18,19 +19,30 @@ import {
   Menu,
   MenuItem,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
-  DirectionsCar as CarIcon,
-  Gavel as GavelIcon,
   Settings as SettingsIcon,
   Notifications as NotificationsIcon,
   Menu as MenuIcon,
   Search as SearchIcon,
-  Language as LanguageIcon,
+  Receipt as ReceiptIcon,
+  Map as MapIcon,
+  Videocam as VideocamIcon,
+  BarChart as AnalyticsIcon,
+  LiveTv as LiveTvIcon,
+  People as PeopleIcon,
 } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
+import { axiosClient } from '../api/axiosClient';
+import { useThemeStore } from '../store/useThemeStore';
+import { LightMode as LightModeIcon, DarkMode as DarkModeIcon } from '@mui/icons-material';
 
 const drawerWidth = 260;
 
@@ -38,21 +50,35 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const menuItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-  { text: 'Live Feed', icon: <CarIcon />, path: '/live' },
-  { text: 'Challans', icon: <GavelIcon />, path: '/challans' },
-  { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-];
-
 export default function MainLayout({ children }: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAuthStore();
 
+  const isOperator = user?.role === 'OPERATOR';
+
+  const menuItems = [
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Live Map', icon: <MapIcon />, path: '/map' },
+    { text: 'Live Feed', icon: <LiveTvIcon />, path: '/live' },
+    { text: 'Challans', icon: <ReceiptIcon />, path: '/challans' },
+    ...(!isOperator ? [
+      { text: 'Cameras', icon: <VideocamIcon />, path: '/cameras' },
+      { text: 'Analytics', icon: <AnalyticsIcon />, path: '/analytics' },
+      { text: 'Team Access', icon: <PeopleIcon />, path: '/team' },
+      { text: 'Settings', icon: <SettingsIcon />, path: '/settings' }
+    ] : [])
+  ];
+
   const [profileAnchor, setProfileAnchor] = useState<null | HTMLElement>(null);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
+  const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false);
+
+  const { mode, toggleTheme } = useThemeStore();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -64,9 +90,29 @@ export default function MainLayout({ children }: LayoutProps) {
   const handleNotifOpen = (event: React.MouseEvent<HTMLElement>) => setNotifAnchor(event.currentTarget);
   const handleNotifClose = () => setNotifAnchor(null);
 
-  const handleLogout = () => {
+  const handleOpenNotifModal = () => {
+    setNotifAnchor(null);
+    setIsNotifModalOpen(true);
+  };
+  const handleCloseNotifModal = () => setIsNotifModalOpen(false);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setIsVehicleModalOpen(true);
+    }
+  };
+
+  const handleLogout = async () => {
     handleProfileClose();
+    try {
+      await axiosClient.post('/auth/logout');
+    } catch (e) {
+      console.error('Logout API failed', e);
+    }
     logout();
+    localStorage.clear();
+    sessionStorage.clear();
     navigate('/login');
   };
 
@@ -112,7 +158,7 @@ export default function MainLayout({ children }: LayoutProps) {
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 36, color: isSelected ? 'primary.main' : 'text.secondary' }}>
-                  {cloneElement(item.icon as ReactElement, { sx: { fontSize: 20 } })}
+                  {cloneElement(item.icon as ReactElement, { sx: { fontSize: 20 } } as any)}
                 </ListItemIcon>
                 <ListItemText 
                   primary={
@@ -154,26 +200,32 @@ export default function MainLayout({ children }: LayoutProps) {
               <MenuIcon />
             </IconButton>
             
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              bgcolor: 'action.hover', 
-              borderRadius: 8,
-              px: 2,
-              py: 0.5,
-              width: { xs: '100%', sm: 300 }
-            }}>
+            <Box 
+              component="form" 
+              onSubmit={handleSearchSubmit}
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                bgcolor: 'action.hover', 
+                borderRadius: 8,
+                px: 2,
+                py: 0.5,
+                width: { xs: '100%', sm: 300 }
+              }}
+            >
               <SearchIcon sx={{ color: 'text.secondary', mr: 1, fontSize: 20 }} />
               <InputBase
                 placeholder="Search vehicles, challans, cameras..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 sx={{ ml: 1, flex: 1, fontSize: '0.875rem', color: 'text.primary' }}
               />
             </Box>
           </Box>
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton sx={{ color: 'text.secondary' }}>
-              <LanguageIcon fontSize="small" />
+            <IconButton sx={{ color: 'text.secondary' }} onClick={toggleTheme}>
+              {mode === 'dark' ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
             </IconButton>
             <IconButton sx={{ color: 'text.secondary' }} onClick={handleNotifOpen}>
               <Badge badgeContent="3" variant="standard" color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', height: 16, minWidth: 16 } }}>
@@ -194,7 +246,7 @@ export default function MainLayout({ children }: LayoutProps) {
         anchorEl={notifAnchor}
         open={Boolean(notifAnchor)}
         onClose={handleNotifClose}
-        PaperProps={{ sx: { width: 300, mt: 1, boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', borderRadius: 2 } }}
+        slotProps={{ paper: { sx: { width: 300, mt: 1, boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', borderRadius: 2 } } }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
@@ -215,17 +267,69 @@ export default function MainLayout({ children }: LayoutProps) {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleNotifClose} sx={{ justifyContent: 'center', color: 'primary.main', fontWeight: 600 }}>
+        <MenuItem onClick={handleOpenNotifModal} sx={{ justifyContent: 'center', color: 'primary.main', fontWeight: 600 }}>
           View All Alerts
         </MenuItem>
       </Menu>
+
+      {/* Vehicle Profile Modal */}
+      <Dialog open={isVehicleModalOpen} onClose={() => setIsVehicleModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Vehicle Profile: {searchQuery.toUpperCase()}</DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Violation History</Typography>
+          <List>
+            <ListItem divider>
+              <ListItemText primary="Speeding (85 km/h)" secondary="Highway 1 North • 2 days ago" />
+              <Typography color="error.main" sx={{ fontWeight: 600 }}>UNPAID</Typography>
+            </ListItem>
+            <ListItem divider>
+              <ListItemText primary="Red Light Violation" secondary="City Center Junction • 1 month ago" />
+              <Typography color="success.main" sx={{ fontWeight: 600 }}>PAID</Typography>
+            </ListItem>
+          </List>
+          <Box sx={{ mt: 3, p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
+            <Typography variant="body2" sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+              <span>Total Fines:</span>
+              <span style={{ fontWeight: 600 }}>$1,200</span>
+            </Typography>
+            <Typography variant="body2" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Pending Amount:</span>
+              <span style={{ fontWeight: 600, color: '#EF4444' }}>$400</span>
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsVehicleModalOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Notifications Modal */}
+      <Dialog open={isNotifModalOpen} onClose={handleCloseNotifModal} maxWidth="sm" fullWidth>
+        <DialogTitle>All Notifications</DialogTitle>
+        <DialogContent dividers>
+          <List>
+            <ListItem divider>
+              <ListItemText primary="Speeding detected" secondary="Highway 1 North • 2 mins ago" />
+            </ListItem>
+            <ListItem divider>
+              <ListItemText primary="Camera CAM-04 Offline" secondary="East Toll Plaza • 15 mins ago" />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="System Update" secondary="Version 1.0.1 applied successfully • 2 hours ago" />
+            </ListItem>
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseNotifModal}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Profile Menu */}
       <Menu
         anchorEl={profileAnchor}
         open={Boolean(profileAnchor)}
         onClose={handleProfileClose}
-        PaperProps={{ sx: { width: 220, mt: 1, boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', borderRadius: 2 } }}
+        slotProps={{ paper: { sx: { width: 220, mt: 1, boxShadow: '0px 4px 20px rgba(0,0,0,0.1)', borderRadius: 2 } } }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
@@ -240,6 +344,10 @@ export default function MainLayout({ children }: LayoutProps) {
         <MenuItem onClick={() => { handleProfileClose(); navigate('/settings'); }}>
           <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
           My Account
+        </MenuItem>
+        <MenuItem onClick={() => { handleProfileClose(); navigate('/'); }}>
+          <ListItemIcon><MapIcon fontSize="small" /></ListItemIcon>
+          Exit to Landing Page
         </MenuItem>
         <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
           <ListItemIcon><DashboardIcon fontSize="small" sx={{ color: 'error.main' }} /></ListItemIcon>

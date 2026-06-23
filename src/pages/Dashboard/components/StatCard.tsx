@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box, alpha, useTheme } from '@mui/material';
+import { motion } from 'framer-motion';
 
 interface StatCardProps {
   title: string;
@@ -16,29 +17,29 @@ export default function StatCard({ title, value, icon, color, trend, isPositive 
   const trendColor = isPositive ? theme.palette.success.main : theme.palette.error.main;
 
   return (
-    <Card 
-      sx={{ 
-        height: '100%', 
-        transition: 'transform 0.2s', 
-        '&:hover': { 
-          transform: 'translateY(-2px)',
-          boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.06)',
-        },
-      }}
+    <motion.div
+      whileHover={{ scale: 1.02, y: -4 }}
+      transition={{ type: 'spring' as const, stiffness: 300, damping: 20 }}
+      style={{ height: '100%' }}
     >
-      <CardContent sx={{ p: 3, pb: '24px !important' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Typography 
-            color="text.secondary" 
-            variant="subtitle2" 
-            sx={{ fontWeight: 600 }}
-          >
-            {title}
-          </Typography>
-          <Box sx={{ color: mainColor }}>
-            {icon}
+      <Card 
+        sx={{ 
+          height: '100%', 
+        }}
+      >
+        <CardContent sx={{ p: 3, pb: '24px !important' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+            <Typography 
+              color="text.secondary" 
+              variant="subtitle2" 
+              sx={{ fontWeight: 600 }}
+            >
+              {title}
+            </Typography>
+            <Box sx={{ color: mainColor }}>
+              {icon}
+            </Box>
           </Box>
-        </Box>
         
         <Typography 
           variant="h4" 
@@ -74,6 +75,7 @@ export default function StatCard({ title, value, icon, color, trend, isPositive 
           </Box>
         )}
       </CardContent>
-    </Card>
+      </Card>
+    </motion.div>
   );
 }

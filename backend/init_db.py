@@ -29,9 +29,9 @@ def init_db():
     if not cam1:
         print("Creating default cameras...")
         cameras = [
-            camera.Camera(id="CAM-01", name="Highway 1 North", status=camera.CameraStatus.LIVE, congestion_level=camera.CongestionLevel.HIGH),
-            camera.Camera(id="CAM-02", name="City Center Junction", status=camera.CameraStatus.LIVE, congestion_level=camera.CongestionLevel.MODERATE),
-            camera.Camera(id="CAM-04", name="East Toll Plaza", status=camera.CameraStatus.OFFLINE, congestion_level=camera.CongestionLevel.LOW),
+            camera.Camera(id="CAM-01", name="Highway 1 North", status=camera.CameraStatus.LIVE, congestion_level=camera.CongestionLevel.HIGH, latitude=40.7128, longitude=-74.0060),
+            camera.Camera(id="CAM-02", name="City Center Junction", status=camera.CameraStatus.LIVE, congestion_level=camera.CongestionLevel.MODERATE, latitude=40.7580, longitude=-73.9855),
+            camera.Camera(id="CAM-04", name="East Toll Plaza", status=camera.CameraStatus.OFFLINE, congestion_level=camera.CongestionLevel.LOW, latitude=40.7829, longitude=-73.9654),
         ]
         db.add_all(cameras)
         db.commit()

@@ -86,7 +86,7 @@ export default function DataTable<T>({
                       const value = row[column.id as keyof T];
                       return (
                         <TableCell key={String(column.id)} align={column.align} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                          {column.format ? column.format(value, row) : value}
+                          {column.format ? column.format(value, row) : (value as ReactNode)}
                         </TableCell>
                       );
                     })}

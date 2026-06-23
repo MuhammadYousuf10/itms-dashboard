@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Enum
+from sqlalchemy import Column, String, Enum, Float
 import enum
 from app.db.database import Base
 
@@ -18,3 +18,5 @@ class Camera(Base):
     name = Column(String, nullable=False)
     status = Column(Enum(CameraStatus), default=CameraStatus.LIVE, nullable=False)
     congestion_level = Column(Enum(CongestionLevel), default=CongestionLevel.LOW, nullable=False)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)

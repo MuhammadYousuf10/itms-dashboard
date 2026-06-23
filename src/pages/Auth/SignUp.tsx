@@ -3,10 +3,11 @@ import { Box, Button, Typography, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import AuthLayout from '../../layouts/AuthLayout';
 import FormInput from '../../components/common/FormInput';
 import { signUpSchema, type SignUpFormValues } from '../../schemas/auth';
+import toast from 'react-hot-toast';
+import { axiosClient } from '../../api/axiosClient';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -24,11 +25,22 @@ export default function SignUp() {
   const onSubmit = async (data: SignUpFormValues) => {
     setIsLoading(true);
     
-    // TODO: Connect to backend
-    console.log("Signing up:", data);
-    setTimeout(() => {
-      navigate('/login');
-    }, 1000);
+    try {
+      await axiosClient.post('/auth/register', {
+        email: data.email,
+        full_name: data.name,
+        password: data.password,
+      });
+      toast.success('Account created successfully');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || 'Failed to create account';
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

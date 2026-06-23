@@ -6,10 +6,16 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: str
     role: UserRole = UserRole.OPERATOR
+    is_active: bool = True
 
 # Properties to receive on creation
 class UserCreate(UserBase):
     password: str
+
+# Properties for updates by admin
+class UserUpdate(BaseModel):
+    role: UserRole | None = None
+    is_active: bool | None = None
 
 # Properties to return to client
 class User(UserBase):
