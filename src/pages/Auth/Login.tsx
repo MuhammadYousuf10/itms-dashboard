@@ -8,6 +8,7 @@ import AuthLayout from '../../layouts/AuthLayout';
 import FormInput from '../../components/common/FormInput';
 import { useAuthStore } from '../../store/useAuthStore';
 import { loginSchema, type LoginFormValues } from '../../schemas/auth';
+import { axiosClient } from '../../api/axiosClient';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -27,17 +28,33 @@ export default function Login() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     
-    // TODO: Replace with actual React Query mutation calling the FastAPI backend
-    setTimeout(() => {
-      // Mock successful login
-      login('mock-jwt-token-12345', {
-        id: '1',
-        name: 'Admin User',
-        email: data.email,
-        role: 'admin'
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', data.email);
+      formData.append('password', data.password);
+
+      const response = await axiosClient.post('/auth/login', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       });
+
+      const { access_token, user } = response.data;
+      
+      login(access_token, {
+        id: user.id,
+        name: user.full_name,
+        email: user.email,
+        role: user.role.toLowerCase()
+      });
+      
       navigate('/');
-    }, 1000);
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      alert(error.response?.data?.detail || "Failed to sign in. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
