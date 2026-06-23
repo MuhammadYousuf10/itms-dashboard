@@ -1,35 +1,39 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { AnimatePresence } from 'framer-motion';
-import PageTransition from '../components/PageTransition';
+import PageLoader from '../components/common/PageLoader';
 
-// Layouts & Public Pages
+// Layouts (Keep static since they wrap everything)
 import MainLayout from '../layouts/MainLayout';
+import CitizenLayout from '../layouts/CitizenLayout';
+import ProtectedRoute from './ProtectedRoute';
+
+// Eagerly Loaded Public Pages
 import Landing from '../pages/Landing/Landing';
 import About from '../pages/Landing/About';
 import Features from '../pages/Landing/Features';
 
-// Auth Pages
+// Eagerly Loaded Auth Pages
 import Login from '../pages/Auth/Login';
 import SignUp from '../pages/Auth/SignUp';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
 
-// Dashboard Pages
-import Dashboard from '../pages/Dashboard/Dashboard';
-import LiveFeed from '../pages/LiveFeed/LiveFeed';
-import Challans from '../pages/Challans/Challans';
-import Settings from '../pages/Settings/Settings';
-import MapDashboard from '../pages/Map/MapDashboard';
-import CameraManagement from '../pages/Cameras/CameraManagement';
-import Analytics from '../pages/Analytics/Analytics';
-import UserManagement from '../pages/Users/UserManagement';
+// Lazy Loaded Dashboard Pages
+const Dashboard = lazy(() => import('../pages/Dashboard/Dashboard'));
+const LiveFeed = lazy(() => import('../pages/LiveFeed/LiveFeed'));
+const Challans = lazy(() => import('../pages/Challans/Challans'));
+const Settings = lazy(() => import('../pages/Settings/Settings'));
+const MapDashboard = lazy(() => import('../pages/Map/MapDashboard'));
+const CameraManagement = lazy(() => import('../pages/Cameras/CameraManagement'));
+const Analytics = lazy(() => import('../pages/Analytics/Analytics'));
+const UserManagement = lazy(() => import('../pages/Users/UserManagement'));
 
-import ProtectedRoute from './ProtectedRoute';
+// Lazy Loaded Citizen Pages
+const Verify = lazy(() => import('../pages/Citizen/Verify'));
+const MyChallans = lazy(() => import('../pages/Citizen/MyChallans'));
 
-// Citizen Pages
-import CitizenLayout from '../layouts/CitizenLayout';
-import Verify from '../pages/Citizen/Verify';
-import MyChallans from '../pages/Citizen/MyChallans';
+import SimpleLoader from '../components/common/SimpleLoader';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -40,107 +44,117 @@ function AnimatedRoutes() {
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {/* Public Auth Routes */}
-        <Route 
-          path="/login" 
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <PageTransition><Login /></PageTransition>} 
-        />
-        <Route 
-          path="/signup" 
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <PageTransition><SignUp /></PageTransition>} 
-        />
-        <Route 
-          path="/forgot-password" 
-          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <PageTransition><ForgotPassword /></PageTransition>} 
-        />
+      <Suspense fallback={<SimpleLoader />}>
+        <Routes location={location} key={location.pathname}>
+          {/* Public Auth Routes */}
+          <Route 
+            path="/login" 
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} 
+          />
+          <Route 
+            path="/signup" 
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUp />} 
+          />
+          <Route 
+            path="/forgot-password" 
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} 
+          />
 
-        {/* Public Landing Routes */}
-        <Route path="/" element={<PageTransition><Landing /></PageTransition>} />
-        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-        <Route path="/features" element={<PageTransition><Features /></PageTransition>} />
+          {/* Public Landing Routes */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/features" element={<Features />} />
 
-        {/* Public Citizen Routes */}
-        <Route element={<CitizenLayout />}>
-          <Route path="/citizen" element={<PageTransition><Verify /></PageTransition>} />
-          <Route path="/citizen/challans" element={<PageTransition><MyChallans /></PageTransition>} />
-        </Route>
+          {/* Public Citizen Routes */}
+          <Route element={<CitizenLayout />}>
+            <Route path="/citizen" element={<Verify />} />
+            <Route path="/citizen/challans" element={<MyChallans />} />
+          </Route>
 
-        {/* Protected Dashboard Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route 
-            path="/dashboard" 
-            element={
-              <MainLayout>
-                <PageTransition><Dashboard /></PageTransition>
-              </MainLayout>
-            } 
-          />
-          <Route 
-            path="/live" 
-            element={
-              <MainLayout>
-                <PageTransition><LiveFeed /></PageTransition>
-              </MainLayout>
-            } 
-          />
-          <Route 
-            path="/challans" 
-            element={
-              <MainLayout>
-                <PageTransition><Challans /></PageTransition>
-              </MainLayout>
-            } 
-          />
-          <Route 
-            path="/settings" 
-            element={
-              isOperator ? <Navigate to="/dashboard" replace /> :
-              <MainLayout>
-                <PageTransition><Settings /></PageTransition>
-              </MainLayout>
-            } 
-          />
-          <Route 
-            path="/map" 
-            element={
-              <MainLayout>
-                <PageTransition><MapDashboard /></PageTransition>
-              </MainLayout>
-            } 
-          />
-          <Route 
-            path="/cameras" 
-            element={
-              isOperator ? <Navigate to="/dashboard" replace /> :
-              <MainLayout>
-                <PageTransition><CameraManagement /></PageTransition>
-              </MainLayout>
-            } 
-          />
-          <Route 
-            path="/analytics" 
-            element={
-              isOperator ? <Navigate to="/dashboard" replace /> :
-              <MainLayout>
-                <PageTransition><Analytics /></PageTransition>
-              </MainLayout>
-            } 
-          />
-          <Route 
-            path="/team" 
-            element={
-              isOperator ? <Navigate to="/dashboard" replace /> :
-              <MainLayout>
-                <PageTransition><UserManagement /></PageTransition>
-              </MainLayout>
-            } 
-          />
-        </Route>
+          {/* Protected Dashboard Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route 
+              path="/dashboard" 
+              element={
+                <MainLayout>
+                  <Suspense fallback={<PageLoader />}>
+                    <Dashboard />
+                  </Suspense>
+                </MainLayout>
+              } 
+            />
+            <Route 
+              path="/live" 
+              element={
+                <MainLayout>
+                  <LiveFeed />
+                </MainLayout>
+              } 
+            />
+            <Route 
+              path="/challans" 
+              element={
+                <MainLayout>
+                  <Suspense fallback={<PageLoader />}>
+                    <Challans />
+                  </Suspense>
+                </MainLayout>
+              } 
+            />
+            <Route 
+              path="/settings" 
+              element={
+                isOperator ? <Navigate to="/dashboard" replace /> :
+                <MainLayout>
+                  <Settings />
+                </MainLayout>
+              } 
+            />
+            <Route 
+              path="/map" 
+              element={
+                <MainLayout>
+                  <MapDashboard />
+                </MainLayout>
+              } 
+            />
+            <Route 
+              path="/cameras" 
+              element={
+                isOperator ? <Navigate to="/dashboard" replace /> :
+                <MainLayout>
+                  <Suspense fallback={<PageLoader />}>
+                    <CameraManagement />
+                  </Suspense>
+                </MainLayout>
+              } 
+            />
+            <Route 
+              path="/analytics" 
+              element={
+                isOperator ? <Navigate to="/dashboard" replace /> :
+                <MainLayout>
+                  <Analytics />
+                </MainLayout>
+              } 
+            />
+            <Route 
+              path="/team" 
+              element={
+                isOperator ? <Navigate to="/dashboard" replace /> :
+                <MainLayout>
+                  <Suspense fallback={<PageLoader />}>
+                    <UserManagement />
+                  </Suspense>
+                </MainLayout>
+              } 
+            />
+          </Route>
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }

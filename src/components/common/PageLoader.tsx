@@ -1,26 +1,33 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 
-interface PageLoaderProps {
-  message?: string;
-}
-
-export default function PageLoader({ message = 'Loading...' }: PageLoaderProps) {
+export default function PageLoader() {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '400px',
-        width: '100%',
-        gap: 2,
-      }}
-    >
-      <CircularProgress size={40} thickness={4} />
-      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-        {message}
-      </Typography>
+    <Box sx={{ p: { xs: 2, md: 4 }, width: '100%', maxWidth: 1400, mx: 'auto' }}>
+      {/* Header Skeleton */}
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Skeleton variant="text" width={250} height={50} sx={{ mb: 1 }} />
+          <Skeleton variant="text" width={400} height={20} />
+        </Box>
+        <Skeleton variant="rounded" width={120} height={40} />
+      </Box>
+
+      {/* Grid/Table Body Skeleton */}
+      <Box sx={{ width: '100%', mt: 4 }}>
+        <Box sx={{ display: 'flex', gap: 3, mb: 3 }}>
+          <Skeleton variant="rounded" sx={{ flexGrow: 1, height: 60 }} />
+          <Skeleton variant="rounded" sx={{ flexGrow: 1, height: 60 }} />
+          <Skeleton variant="rounded" sx={{ flexGrow: 1, height: 60 }} />
+          <Skeleton variant="rounded" sx={{ flexGrow: 1, height: 60 }} />
+        </Box>
+        
+        {/* Table Rows */}
+        {[...Array(6)].map((_, i) => (
+          <Box key={i} sx={{ display: 'flex', gap: 2, mb: 1.5 }}>
+            <Skeleton variant="rounded" sx={{ flexGrow: 1, height: 50 }} />
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 }

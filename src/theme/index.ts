@@ -53,6 +53,7 @@ export const getTheme = (mode: PaletteMode) => {
             background-color: ${isDark ? '#020617' : '#f8fafc'};
             background-image: ${isDark ? 'radial-gradient(circle at top right, rgba(56,189,248,0.05) 0%, transparent 40%), radial-gradient(circle at bottom left, rgba(168,85,247,0.05) 0%, transparent 40%)' : 'radial-gradient(circle at top right, rgba(56,189,248,0.05) 0%, transparent 40%), radial-gradient(circle at bottom left, rgba(168,85,247,0.05) 0%, transparent 40%)'};
             background-attachment: fixed;
+            scrollbar-gutter: stable;
           }
         `,
       },
