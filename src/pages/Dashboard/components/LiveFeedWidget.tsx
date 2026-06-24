@@ -8,8 +8,16 @@ export default function LiveFeedWidget({ feeds }: { feeds: any[] }) {
         <Typography variant="h6" sx={{ fontWeight: 800, display: 'flex', alignItems: 'center', gap: 1 }}>
           <Videocam color="primary" /> Camera Matrix
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main', animation: 'pulse 2s infinite' }}>
-          <FiberManualRecord sx={{ fontSize: 14 }} />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}>
+          <FiberManualRecord sx={{ 
+            fontSize: 14, 
+            animation: 'livePulse 1.5s infinite',
+            '@keyframes livePulse': {
+              '0%': { opacity: 1 },
+              '50%': { opacity: 0.3 },
+              '100%': { opacity: 1 }
+            }
+          }} />
           <Typography variant="caption" sx={{ fontWeight: 700 }}>LIVE</Typography>
         </Box>
       </Box>

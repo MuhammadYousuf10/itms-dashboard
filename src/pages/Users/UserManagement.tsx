@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { 
-  Box, Typography, Chip, IconButton, Menu, MenuItem, CircularProgress,
+  Box, Typography, Chip, IconButton, Menu, MenuItem,
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, InputAdornment
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -20,6 +20,7 @@ import { axiosClient } from '../../api/axiosClient';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useEffect } from 'react';
+import TableSkeleton from '../../components/skeletons/TableSkeleton';
 
 interface User {
   id: string;
@@ -232,9 +233,7 @@ export default function UserManagement() {
       </Box>
 
       {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
-        </Box>
+        <TableSkeleton rows={10} columns={7} />
       ) : (
         <DataTable
           columns={columns}

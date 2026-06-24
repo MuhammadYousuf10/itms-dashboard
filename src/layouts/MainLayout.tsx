@@ -183,12 +183,23 @@ export default function MainLayout({ children }: LayoutProps) {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          bgcolor: 'background.paper',
-          borderBottom: 1,
-          borderColor: 'divider',
+          bgcolor: 'transparent',
+          pt: { xs: 1, sm: 2 },
+          px: { xs: 2, sm: 3, md: 4 },
+          pointerEvents: 'none',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '70px !important' }}>
+        <Box sx={{
+          pointerEvents: 'auto',
+          borderRadius: '16px',
+          bgcolor: (theme) => alpha(theme.palette.background.paper, 0.7),
+          backdropFilter: 'blur(16px)',
+          border: '1px solid',
+          borderColor: (theme) => alpha(theme.palette.divider, 0.4),
+          boxShadow: (theme) => `0 8px 32px 0 ${alpha(theme.palette.common.black, 0.05)}`,
+        }}>
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '64px !important', px: { xs: 2, sm: 3 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
             <IconButton
               color="inherit"
@@ -206,11 +217,21 @@ export default function MainLayout({ children }: LayoutProps) {
               sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                bgcolor: 'action.hover', 
-                borderRadius: 8,
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04), 
+                borderRadius: '12px',
                 px: 2,
                 py: 0.5,
-                width: { xs: '100%', sm: 300 }
+                width: { xs: '100%', sm: 320 },
+                border: '1px solid',
+                borderColor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:focus-within': {
+                  bgcolor: (theme) => alpha(theme.palette.background.paper, 0.9),
+                  borderColor: 'primary.main',
+                  boxShadow: (theme) => `0 0 0 4px ${alpha(theme.palette.primary.main, 0.15)}, inset 0 2px 4px rgba(0,0,0,0.02)`,
+                  width: { xs: '100%', sm: 380 },
+                }
               }}
             >
               <SearchIcon sx={{ color: 'text.secondary', mr: 1, fontSize: 20 }} />
@@ -223,22 +244,77 @@ export default function MainLayout({ children }: LayoutProps) {
             </Box>
           </Box>
           
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton sx={{ color: 'text.secondary' }} onClick={toggleTheme}>
-              {mode === 'dark' ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
-            </IconButton>
-            <IconButton sx={{ color: 'text.secondary' }} onClick={handleNotifOpen}>
-              <Badge badgeContent="3" variant="standard" color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', height: 16, minWidth: 16 } }}>
-                <NotificationsIcon fontSize="small" />
-              </Badge>
-            </IconButton>
-            <Avatar 
-              src="https://i.pravatar.cc/150?img=11"
-              sx={{ width: 32, height: 32, ml: 1, cursor: 'pointer' }}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', gap: 0.5 }}>
+              <IconButton 
+                sx={{ 
+                  color: 'text.secondary', 
+                  bgcolor: (theme) => alpha(theme.palette.text.primary, 0.04),
+                  transition: 'all 0.2s',
+                  '&:hover': { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1), color: 'primary.main', transform: 'translateY(-2px)' }
+                }} 
+                onClick={toggleTheme}
+              >
+                {mode === 'dark' ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
+              </IconButton>
+              <IconButton 
+                sx={{ 
+                  color: 'text.secondary',
+                  bgcolor: (theme) => alpha(theme.palette.text.primary, 0.04),
+                  transition: 'all 0.2s',
+                  '&:hover': { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1), color: 'primary.main', transform: 'translateY(-2px)' }
+                }} 
+                onClick={handleNotifOpen}
+              >
+                <Badge badgeContent="3" variant="standard" color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.65rem', height: 16, minWidth: 16 } }}>
+                  <NotificationsIcon fontSize="small" />
+                </Badge>
+              </IconButton>
+            </Box>
+            
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1.5, 
+                p: 0.5, 
+                pl: 2, 
+                borderRadius: '16px', 
+                background: (theme) => `linear-gradient(90deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.background.paper, 0.5)} 100%)`,
+                border: '1px solid', 
+                borderColor: (theme) => alpha(theme.palette.primary.main, 0.2), 
+                cursor: 'pointer', 
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
+                '&:hover': { 
+                  borderColor: 'primary.main',
+                  boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
+                  transform: 'translateY(-1px)'
+                } 
+              }} 
               onClick={handleProfileOpen}
-            />
+            >
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.1, color: 'text.primary', mb: 0.5 }}>
+                  {user?.name || 'Administrator'}
+                </Typography>
+                <Typography variant="caption" sx={{ lineHeight: 1, color: 'primary.main', fontWeight: 600, letterSpacing: '0.5px' }}>
+                  {(user?.role || 'Admin').toUpperCase()}
+                </Typography>
+              </Box>
+              <Avatar 
+                src={(user as any)?.settings?.avatarUrl || "https://i.pravatar.cc/150?img=11"}
+                sx={{ 
+                  width: 36, 
+                  height: 36,
+                  border: '2px solid',
+                  borderColor: 'background.paper',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }}
+              />
+            </Box>
           </Box>
         </Toolbar>
+        </Box>
       </AppBar>
 
       {/* Notifications Menu */}
@@ -385,7 +461,7 @@ export default function MainLayout({ children }: LayoutProps) {
       
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: { xs: 2, sm: 3, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: '70px' }}
+        sx={{ flexGrow: 1, p: { xs: 2, sm: 3, md: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` }, mt: '80px' }}
       >
         {children}
       </Box>

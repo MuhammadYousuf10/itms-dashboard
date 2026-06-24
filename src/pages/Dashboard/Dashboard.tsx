@@ -1,4 +1,4 @@
-import { Box, Grid, CircularProgress, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import StatCard from './components/StatCard';
 import TrafficChart from './components/TrafficChart';
@@ -9,6 +9,7 @@ import LiveFeedWidget from './components/LiveFeedWidget';
 import HotspotMapWidget from './components/HotspotMapWidget';
 import QuickDisputesWidget from './components/QuickDisputesWidget';
 import RevenueForecastWidget from './components/RevenueForecastWidget';
+import DashboardSkeleton from '../../components/skeletons/DashboardSkeleton';
 import { Speed as SpeedIcon, Warning as WarningIcon, DirectionsCar as CarIcon, Receipt as ReceiptIcon } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { axiosClient } from '../../api/axiosClient';
@@ -37,11 +38,7 @@ export default function Dashboard() {
   };
 
   if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {

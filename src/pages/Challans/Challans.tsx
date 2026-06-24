@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Chip, CircularProgress, IconButton, Menu, MenuItem,
+  Box, Typography, Chip, IconButton, Menu, MenuItem,
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField, Tooltip, InputAdornment
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,6 +14,7 @@ import FeedbackIcon from '@mui/icons-material/Feedback';
 import GavelIcon from '@mui/icons-material/Gavel';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
 import DataTable from '../../components/common/DataTable';
+import TableSkeleton from '../../components/skeletons/TableSkeleton';
 import type { Column } from '../../components/common/DataTable';
 import { axiosClient } from '../../api/axiosClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -310,9 +311,7 @@ export default function Challans() {
       </Box>
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
-        </Box>
+        <TableSkeleton rows={10} columns={8} />
       ) : (
         <DataTable
           columns={columns}

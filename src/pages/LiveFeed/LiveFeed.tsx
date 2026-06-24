@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Card, IconButton, Chip, CircularProgress, TextField } from '@mui/material';
+import { Box, Typography, Grid, Card, IconButton, Chip, TextField } from '@mui/material';
 import { Videocam as VideocamIcon, Fullscreen as FullscreenIcon, FiberManualRecord as RecordIcon } from '@mui/icons-material';
 import { axiosClient } from '../../api/axiosClient';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import LiveFeedSkeleton from '../../components/skeletons/LiveFeedSkeleton';
 
 interface Camera {
   id: string;
@@ -96,8 +97,8 @@ export default function LiveFeed() {
       </Box>
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
+        <Box sx={{ mt: 2 }}>
+          <LiveFeedSkeleton count={6} />
         </Box>
       ) : (
         <motion.div variants={containerVariants} initial="hidden" animate="show">

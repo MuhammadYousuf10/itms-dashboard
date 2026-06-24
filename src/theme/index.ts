@@ -91,6 +91,15 @@ export const getTheme = (mode: PaletteMode) => {
           },
         },
       },
+      MuiDialog: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: isDark ? '#0f172a' : '#ffffff',
+            backgroundImage: 'none',
+            backdropFilter: 'none',
+          }
+        }
+      },
       MuiAppBar: {
         styleOverrides: {
           root: {

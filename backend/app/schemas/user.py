@@ -17,9 +17,18 @@ class UserUpdate(BaseModel):
     role: UserRole | None = None
     is_active: bool | None = None
 
+# Properties for updates by user themselves
+class UserSettingsUpdate(BaseModel):
+    full_name: str | None = None
+    email: EmailStr | None = None
+    settings: dict | None = None
+    current_password: str | None = None
+    new_password: str | None = None
+
 # Properties to return to client
 class User(UserBase):
     id: str
+    settings: dict = {}
 
     class Config:
         from_attributes = True

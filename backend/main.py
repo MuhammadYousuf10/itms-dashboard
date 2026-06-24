@@ -37,12 +37,13 @@ def read_root():
     return {"message": "Welcome to the ITMS API"}
 
 # Include routers
-from app.api.routes import auth, cameras, challans, dashboard, websockets, users, citizen
+from app.api.routes import auth, cameras, challans, dashboard, websockets, users, citizen, analytics
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(cameras.router, prefix="/api/cameras", tags=["cameras"])
 app.include_router(challans.router, prefix="/api/challans", tags=["challans"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
+app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(citizen.router, prefix="/api/citizen", tags=["citizen"])
 app.include_router(websockets.router, prefix="/ws", tags=["websockets"])

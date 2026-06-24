@@ -68,7 +68,7 @@ def get_dashboard_stats(db: Session = Depends(get_db), current_user: User = Depe
 
     # 10. Quick Disputes Queue
     disputed = db.query(Challan).filter(Challan.status == ChallanStatus.DISPUTED).limit(3).all()
-    quick_disputes = [{"id": d.id, "plate": d.vehicle_plate, "reason": d.dispute_reason or "N/A", "status": d.status.value} for d in disputed]
+    quick_disputes = [{"id": d.id, "plate": d.vehicle_plate, "reason": d.dispute_reason or "N/A", "status": d.status.value, "evidence_url": d.dispute_evidence_url} for d in disputed]
 
     # 11. Revenue Forecast
     current_revenue = db.query(func.sum(Payment.amount)).scalar() or 0

@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, Enum, Boolean
+from sqlalchemy import Column, String, Enum, Boolean, JSON
 import enum
 from app.db.database import Base
 
@@ -16,3 +16,4 @@ class User(Base):
     full_name = Column(String, nullable=False)
     role = Column(Enum(UserRole), default=UserRole.OPERATOR, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
+    settings = Column(JSON, default={}, nullable=False)

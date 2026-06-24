@@ -1,10 +1,12 @@
-import { Box, Typography, Chip, CircularProgress, TextField, InputAdornment } from '@mui/material';
+import { Box, Typography, Chip, TextField, InputAdornment } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import DataTable from '../../components/common/DataTable';
 import type { Column } from '../../components/common/DataTable';
+import TableSkeleton from '../../components/skeletons/TableSkeleton';
 import { Search as SearchIcon, CheckCircle as CheckIcon, Error as ErrorIcon, Speed as SpeedIcon, DirectionsCar as CarIcon, Warning as WarningIcon } from '@mui/icons-material';
 import { axiosClient } from '../../api/axiosClient';
+
 interface Camera {
   id: string;
   name: string;
@@ -129,9 +131,7 @@ export default function CameraManagement() {
       </Box>
 
       {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress />
-        </Box>
+        <TableSkeleton rows={10} columns={5} />
       ) : (
         <DataTable
           columns={columns}

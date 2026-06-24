@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { AnimatePresence } from 'framer-motion';
-import PageLoader from '../components/common/PageLoader';
+import { Box } from '@mui/material';
 
 // Layouts (Keep static since they wrap everything)
 import MainLayout from '../layouts/MainLayout';
@@ -39,7 +39,7 @@ function AnimatedRoutes() {
   const location = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
-  
+
   const isOperator = user?.role === 'OPERATOR';
 
   return (
@@ -47,17 +47,17 @@ function AnimatedRoutes() {
       <Suspense fallback={<SimpleLoader />}>
         <Routes location={location} key={location.pathname}>
           {/* Public Auth Routes */}
-          <Route 
-            path="/login" 
-            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} 
+          <Route
+            path="/login"
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />}
           />
-          <Route 
-            path="/signup" 
-            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUp />} 
+          <Route
+            path="/signup"
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUp />}
           />
-          <Route 
-            path="/forgot-password" 
-            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} 
+          <Route
+            path="/forgot-password"
+            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ForgotPassword />}
           />
 
           {/* Public Landing Routes */}
@@ -67,87 +67,109 @@ function AnimatedRoutes() {
 
           {/* Public Citizen Routes */}
           <Route element={<CitizenLayout />}>
-            <Route path="/citizen" element={<Verify />} />
-            <Route path="/citizen/challans" element={<MyChallans />} />
+            <Route 
+              path="/citizen" 
+              element={
+                <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                  <Verify />
+                </Suspense>
+              } 
+            />
+            <Route 
+              path="/citizen/challans" 
+              element={
+                <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                  <MyChallans />
+                </Suspense>
+              } 
+            />
           </Route>
 
           {/* Protected Dashboard Routes */}
           <Route element={<ProtectedRoute />}>
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 <MainLayout>
-                  <Suspense fallback={<PageLoader />}>
+                  <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
                     <Dashboard />
                   </Suspense>
                 </MainLayout>
-              } 
+              }
             />
-            <Route 
-              path="/live" 
+            <Route
+              path="/live"
               element={
                 <MainLayout>
-                  <LiveFeed />
+                  <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                    <LiveFeed />
+                  </Suspense>
                 </MainLayout>
-              } 
+              }
             />
-            <Route 
-              path="/challans" 
+            <Route
+              path="/challans"
               element={
                 <MainLayout>
-                  <Suspense fallback={<PageLoader />}>
+                  <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
                     <Challans />
                   </Suspense>
                 </MainLayout>
-              } 
+              }
             />
-            <Route 
-              path="/settings" 
+            <Route
+              path="/settings"
               element={
                 isOperator ? <Navigate to="/dashboard" replace /> :
-                <MainLayout>
-                  <Settings />
-                </MainLayout>
-              } 
+                  <MainLayout>
+                    <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                      <Settings />
+                    </Suspense>
+                  </MainLayout>
+              }
             />
-            <Route 
-              path="/map" 
+            <Route
+              path="/map"
               element={
                 <MainLayout>
-                  <MapDashboard />
-                </MainLayout>
-              } 
-            />
-            <Route 
-              path="/cameras" 
-              element={
-                isOperator ? <Navigate to="/dashboard" replace /> :
-                <MainLayout>
-                  <Suspense fallback={<PageLoader />}>
-                    <CameraManagement />
+                  <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                    <MapDashboard />
                   </Suspense>
                 </MainLayout>
-              } 
+              }
             />
-            <Route 
-              path="/analytics" 
+            <Route
+              path="/cameras"
               element={
                 isOperator ? <Navigate to="/dashboard" replace /> :
-                <MainLayout>
-                  <Analytics />
-                </MainLayout>
-              } 
+                  <MainLayout>
+                    <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                      <CameraManagement />
+                    </Suspense>
+                  </MainLayout>
+              }
             />
-            <Route 
-              path="/team" 
+            <Route
+              path="/analytics"
               element={
                 isOperator ? <Navigate to="/dashboard" replace /> :
-                <MainLayout>
-                  <Suspense fallback={<PageLoader />}>
-                    <UserManagement />
-                  </Suspense>
-                </MainLayout>
-              } 
+                  <MainLayout>
+                    <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                      <Analytics />
+                    </Suspense>
+                  </MainLayout>
+              }
+            />
+            <Route
+              path="/team"
+              element={
+                isOperator ? <Navigate to="/dashboard" replace /> :
+                  <MainLayout>
+                    <Suspense fallback={<Box sx={{ minHeight: '80vh' }} />}>
+                      <UserManagement />
+                    </Suspense>
+                  </MainLayout>
+              }
             />
           </Route>
 

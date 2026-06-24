@@ -8,7 +8,7 @@ export default function CitizenLayout() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
       <AppBar position="static" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }} onClick={() => navigate('/citizen')}>
               <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'primary.main', display: 'flex' }}>
@@ -20,9 +20,8 @@ export default function CitizenLayout() {
             </Box>
             <Button 
               variant="outlined" 
-              color="inherit" 
               onClick={() => navigate('/')}
-              sx={{ borderColor: 'divider', textTransform: 'none', fontWeight: 600 }}
+              sx={{ borderColor: 'divider', color: 'text.primary', textTransform: 'none', fontWeight: 600, '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
             >
               Back to Website
             </Button>
@@ -30,7 +29,7 @@ export default function CitizenLayout() {
         </Container>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ flexGrow: 1, py: 6, display: 'flex', flexDirection: 'column' }}>
+      <Container maxWidth="xl" sx={{ flexGrow: 1, py: 6, display: 'flex', flexDirection: 'column' }}>
         <Outlet />
       </Container>
       

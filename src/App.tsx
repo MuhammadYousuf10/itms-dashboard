@@ -3,7 +3,6 @@ import { getTheme } from './theme';
 import { useMemo } from 'react';
 import { useThemeStore } from './store/useThemeStore';
 import AppRouter from './routes/AppRouter';
-
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 

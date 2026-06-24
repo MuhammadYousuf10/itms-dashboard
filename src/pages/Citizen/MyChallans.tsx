@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Card, CardContent, Chip, Button, Divider, 
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, CircularProgress, Alert,
-  IconButton, Grid, Stepper, Step, StepLabel, Fade, alpha
+  IconButton, Grid, Stepper, Step, StepLabel, Fade, alpha, useTheme
 } from '@mui/material';
 
 import PaymentIcon from '@mui/icons-material/Payment';
@@ -16,6 +16,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { axiosClient } from '../../api/axiosClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import ChallanCardSkeleton from '../../components/skeletons/ChallanCardSkeleton';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -31,6 +32,7 @@ interface ChallanRow {
 
 export default function MyChallans() {
   const navigate = useNavigate();
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const plate = sessionStorage.getItem('citizen_plate');
   
@@ -132,7 +134,17 @@ export default function MyChallans() {
   };
 
   if (isLoading) {
-    return <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}><CircularProgress /></Box>;
+    return (
+      <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Grid container spacing={3}>
+          {Array.from(new Array(3)).map((_, i) => (
+            <Grid key={i} size={{ xs: 12 }}>
+              <ChallanCardSkeleton />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    );
   }
 
   return (
@@ -154,10 +166,10 @@ export default function MyChallans() {
         <Grid container spacing={4} sx={{ mb: 6 }}>
           <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ 
-              background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)', 
+              background: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${theme.palette.error.dark} 100%)`, 
               color: 'white', 
               borderRadius: 4, 
-              boxShadow: '0 20px 40px -10px rgba(239, 68, 68, 0.4)',
+              boxShadow: `0 20px 40px -10px ${alpha(theme.palette.error.main, 0.4)}`,
               position: 'relative',
               overflow: 'hidden'
             }}>
@@ -177,10 +189,10 @@ export default function MyChallans() {
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ 
-              background: 'linear-gradient(135deg, #10b981 0%, #047857 100%)', 
+              background: `linear-gradient(135deg, ${theme.palette.success.main} 0%, ${theme.palette.success.dark} 100%)`, 
               color: 'white', 
               borderRadius: 4,
-              boxShadow: '0 20px 40px -10px rgba(16, 185, 129, 0.4)',
+              boxShadow: `0 20px 40px -10px ${alpha(theme.palette.success.main, 0.4)}`,
               position: 'relative',
               overflow: 'hidden'
             }}>
@@ -200,10 +212,10 @@ export default function MyChallans() {
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ 
-              background: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)', 
+              background: `linear-gradient(135deg, ${theme.palette.warning.main} 0%, ${theme.palette.warning.dark} 100%)`, 
               color: 'white', 
               borderRadius: 4,
-              boxShadow: '0 20px 40px -10px rgba(245, 158, 11, 0.4)',
+              boxShadow: `0 20px 40px -10px ${alpha(theme.palette.warning.main, 0.4)}`,
               position: 'relative',
               overflow: 'hidden'
             }}>
@@ -250,12 +262,15 @@ export default function MyChallans() {
                   position: 'relative',
                   overflow: 'visible',
                   transition: 'transform 0.2s',
-                  '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.12)' }
+                  '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.12)' },
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column'
                 }}>
                   {/* Left Accent Bar */}
                   <Box sx={{ position: 'absolute', left: -1, top: 20, bottom: 20, width: 4, bgcolor: statusColor, borderRadius: '0 4px 4px 0' }} />
                   
-                  <CardContent sx={{ p: 4 }}>
+                  <CardContent sx={{ p: 4, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
                       <Box>
                         <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, mb: 0.5, display: 'block' }}>
@@ -269,13 +284,13 @@ export default function MyChallans() {
                           fontWeight: 800, 
                           borderRadius: 2,
                           bgcolor: alpha(
-                            isPaid ? '#10b981' : isPending ? '#ef4444' : isDisputed ? '#f59e0b' : '#6b7280', 
+                            isPaid ? theme.palette.success.main : isPending ? theme.palette.error.main : isDisputed ? theme.palette.warning.main : theme.palette.text.secondary, 
                             0.1
                           ),
-                          color: isPaid ? '#047857' : isPending ? '#b91c1c' : isDisputed ? '#b45309' : '#374151',
+                          color: isPaid ? 'success.dark' : isPending ? 'error.dark' : isDisputed ? 'warning.dark' : 'text.primary',
                           border: 1,
                           borderColor: alpha(
-                            isPaid ? '#10b981' : isPending ? '#ef4444' : isDisputed ? '#f59e0b' : '#6b7280', 
+                            isPaid ? theme.palette.success.main : isPending ? theme.palette.error.main : isDisputed ? theme.palette.warning.main : theme.palette.text.secondary, 
                             0.2
                           )
                         }} 
@@ -299,8 +314,8 @@ export default function MyChallans() {
 
                     {/* Dispute Tracking Timeline */}
                     {isDisputed && (
-                      <Box sx={{ mb: 4, p: 3, bgcolor: alpha('#f59e0b', 0.05), borderRadius: 3, border: 1, borderColor: alpha('#f59e0b', 0.2) }}>
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 800, color: '#b45309' }}>Dispute Status</Typography>
+                      <Box sx={{ mb: 4, p: 3, bgcolor: alpha(theme.palette.warning.main, 0.05), borderRadius: 3, border: 1, borderColor: alpha(theme.palette.warning.main, 0.2) }}>
+                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 800, color: 'warning.dark' }}>Dispute Status</Typography>
                         <Stepper activeStep={1} alternativeLabel>
                           <Step>
                             <StepLabel>Dispute Filed</StepLabel>
@@ -317,7 +332,7 @@ export default function MyChallans() {
 
                     <Divider sx={{ mb: 3 }} />
 
-                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 'auto' }}>
                       <Button 
                         variant="outlined" 
                         color="inherit"
@@ -337,7 +352,7 @@ export default function MyChallans() {
                             size="medium" 
                             startIcon={<DisputeIcon />}
                             onClick={() => { setSelectedChallan(challan); setDialogType('dispute'); }}
-                            sx={{ fontWeight: 600, color: 'text.secondary', '&:hover': { color: 'warning.main', bgcolor: alpha('#f59e0b', 0.1) } }}
+                            sx={{ fontWeight: 600, color: 'text.secondary', '&:hover': { color: 'warning.main', bgcolor: alpha(theme.palette.warning.main, 0.1) } }}
                           >
                             Dispute
                           </Button>
@@ -347,7 +362,7 @@ export default function MyChallans() {
                             size="medium" 
                             startIcon={<PaymentIcon />}
                             onClick={() => { setSelectedChallan(challan); setDialogType('pay'); }}
-                            sx={{ borderRadius: 2, ml: 'auto', boxShadow: '0 4px 14px 0 rgba(239, 68, 68, 0.39)', fontWeight: 700, px: 3 }}
+                            sx={{ borderRadius: 2, ml: 'auto', boxShadow: `0 4px 14px 0 ${alpha(theme.palette.error.main, 0.39)}`, fontWeight: 700, px: 3 }}
                           >
                             Pay Now
                           </Button>
@@ -360,7 +375,7 @@ export default function MyChallans() {
                           size="medium" 
                           startIcon={<CheckCircleIcon />}
                           onClick={() => window.print()}
-                          sx={{ ml: 'auto', borderRadius: 2, boxShadow: '0 4px 14px 0 rgba(16, 185, 129, 0.39)', fontWeight: 700, px: 3 }}
+                          sx={{ ml: 'auto', borderRadius: 2, boxShadow: `0 4px 14px 0 ${alpha(theme.palette.success.main, 0.39)}`, fontWeight: 700, px: 3 }}
                         >
                           Receipt
                         </Button>

@@ -37,6 +37,7 @@ export default function FormInput<T extends FieldValues>({
         <TextField
           {...field}
           {...props}
+          value={field.value ?? ''}
           label={label}
           type={currentType}
           fullWidth
@@ -44,7 +45,11 @@ export default function FormInput<T extends FieldValues>({
           error={!!error}
           helperText={error?.message}
           slotProps={{
-            ...props.slotProps,
+            ...(props as any).slotProps,
+            inputLabel: {
+              ...(props as any).InputLabelProps,
+              shrink: field.value ? true : undefined,
+            },
             input: {
               ...(props.slotProps as any)?.input,
               ...props.InputProps,

@@ -1,9 +1,10 @@
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useQuery } from '@tanstack/react-query';
 import { axiosClient } from '../../api/axiosClient';
+import { Skeleton } from '@mui/material';
 
 // Fix for default marker icons in Leaflet with Webpack/Vite
 delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: string })._getIconUrl;
@@ -43,8 +44,8 @@ export default function MapDashboard() {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-        <CircularProgress />
+      <Box sx={{ height: 'calc(100vh - 120px)', width: '100%', mt: 2, borderRadius: 2, overflow: 'hidden' }}>
+        <Skeleton animation="wave" variant="rectangular" width="100%" height="100%" />
       </Box>
     );
   }
