@@ -11,10 +11,10 @@ def init_db():
 
     db = SessionLocal()
     
-    # Check if admin exists
+    # Check if default system admin exists
     admin = db.query(user.User).filter(user.User.email == "admin@itms.gov").first()
     if not admin:
-        print("Creating default admin user...")
+        print("Creating default system admin user...")
         admin = user.User(
             email="admin@itms.gov",
             hashed_password=get_password_hash("admin123"),
@@ -22,6 +22,19 @@ def init_db():
             role=user.UserRole.ADMIN
         )
         db.add(admin)
+        db.commit()
+
+    # Check if personal admin exists
+    personal_admin = db.query(user.User).filter(user.User.email == "m.yousufuddin10@gmail.com").first()
+    if not personal_admin:
+        print("Creating personal admin user...")
+        personal_admin = user.User(
+            email="m.yousufuddin10@gmail.com",
+            hashed_password=get_password_hash("asdqwe123"),
+            full_name="Muhammad Yousuf",
+            role=user.UserRole.ADMIN
+        )
+        db.add(personal_admin)
         db.commit()
 
     # Create dummy cameras
