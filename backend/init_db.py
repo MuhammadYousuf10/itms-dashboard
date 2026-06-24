@@ -37,6 +37,51 @@ def init_db():
         db.add(personal_admin)
         db.commit()
 
+    # Seed test operator/user accounts for testing
+    test_accounts = [
+        {
+            "email": "operator@itms.gov",
+            "password": "operator123",
+            "full_name": "Ali Hassan",
+            "role": user.UserRole.OPERATOR,
+            "is_active": True,
+        },
+        {
+            "email": "suspended@test.com",
+            "password": "suspended123",
+            "full_name": "Suspended User",
+            "role": user.UserRole.OPERATOR,
+            "is_active": False,
+        },
+        {
+            "email": "sara.operator@itms.gov",
+            "password": "sara123",
+            "full_name": "Sara Khan",
+            "role": user.UserRole.OPERATOR,
+            "is_active": True,
+        },
+        {
+            "email": "test.admin@itms.gov",
+            "password": "testadmin123",
+            "full_name": "Test Admin",
+            "role": user.UserRole.ADMIN,
+            "is_active": True,
+        },
+    ]
+    for account in test_accounts:
+        existing = db.query(user.User).filter(user.User.email == account["email"]).first()
+        if not existing:
+            print(f"Creating test account: {account['email']}...")
+            new_user = user.User(
+                email=account["email"],
+                hashed_password=get_password_hash(account["password"]),
+                full_name=account["full_name"],
+                role=account["role"],
+                is_active=account["is_active"],
+            )
+            db.add(new_user)
+    db.commit()
+
     # Create dummy cameras
     cam1 = db.query(camera.Camera).filter(camera.Camera.id == "CAM-01").first()
     if not cam1:
