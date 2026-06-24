@@ -19,7 +19,10 @@ export default function QuickDisputesWidget({ disputes }: { disputes: any[] }) {
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       toast.success('Dispute approved and challan cancelled.');
     },
-    onError: () => toast.error('Failed to approve dispute.')
+    onError: (error: any) => {
+      const msg = error.response?.data?.detail || 'Failed to approve dispute.';
+      toast.error(msg);
+    }
   });
 
   const rejectMutation = useMutation({
@@ -30,7 +33,10 @@ export default function QuickDisputesWidget({ disputes }: { disputes: any[] }) {
       queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       toast.success('Dispute rejected. Challan status restored.');
     },
-    onError: () => toast.error('Failed to reject dispute.')
+    onError: (error: any) => {
+      const msg = error.response?.data?.detail || 'Failed to reject dispute.';
+      toast.error(msg);
+    }
   });
 
   return (

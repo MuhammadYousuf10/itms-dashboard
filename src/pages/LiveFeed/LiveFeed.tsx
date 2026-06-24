@@ -29,7 +29,8 @@ export default function LiveFeed() {
 
   useEffect(() => {
     if (error) {
-      toast.error(`Failed to load live feeds: ${error.message}`);
+      const msg = (error as any).response?.data?.detail || error.message;
+      toast.error(`Failed to load live feeds: ${msg}`);
     }
   }, [error]);
 

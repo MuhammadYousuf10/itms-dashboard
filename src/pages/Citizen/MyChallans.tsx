@@ -116,8 +116,8 @@ export default function MyChallans() {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         evidence_url = uploadRes.data.url;
-      } catch (_error) {
-        toast.error('Failed to upload evidence image.');
+      } catch (error: any) {
+        toast.error(error.response?.data?.detail || 'Failed to upload evidence image.');
         setIsUploading(false);
         return;
       }

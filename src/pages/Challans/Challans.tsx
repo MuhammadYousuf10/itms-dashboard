@@ -173,7 +173,8 @@ export default function Challans() {
 
   useEffect(() => {
     if (error) {
-      toast.error(`Failed to load challans: ${error.message}`);
+      const msg = (error as any).response?.data?.detail || error.message;
+      toast.error(`Failed to load challans: ${msg}`);
     }
   }, [error]);
 
