@@ -7,15 +7,17 @@ backend_dir = os.path.join(root_dir, "backend")
 sys.path.append(root_dir)
 sys.path.append(backend_dir)
 
-# Set SQLite and Uploads directory to /tmp which is writable on Vercel
+# CRITICAL: Set env vars BEFORE any imports that read them.
+# The database engine is created at import time from settings,
+# so these must be set first.
 os.environ["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/itms.db"
 os.environ["VERCEL"] = "1"
 
-# We must ensure the backend app knows we are in a serverless environment
+# Now it is safe to import the app and init_db
 from main import app
-
-# Create mock data if it doesn't exist in /tmp
 from init_db import init_db
+
+# Seed the database on every cold start
 try:
     init_db()
 except Exception as e:

@@ -24,7 +24,7 @@ def init_db():
         db.add(admin)
         db.commit()
 
-    # Check if personal admin exists
+    # Ensure personal admin always has correct credentials (upsert)
     personal_admin = db.query(user.User).filter(user.User.email == "m.yousufuddin10@gmail.com").first()
     if not personal_admin:
         print("Creating personal admin user...")
@@ -32,10 +32,18 @@ def init_db():
             email="m.yousufuddin10@gmail.com",
             hashed_password=get_password_hash("asdqwe123"),
             full_name="Muhammad Yousuf",
-            role=user.UserRole.ADMIN
+            role=user.UserRole.ADMIN,
+            is_active=True,
         )
         db.add(personal_admin)
-        db.commit()
+    else:
+        # Always enforce correct password and role in case of stale data
+        personal_admin.hashed_password = get_password_hash("asdqwe123")
+        personal_admin.role = user.UserRole.ADMIN
+        personal_admin.full_name = "Muhammad Yousuf"
+        personal_admin.is_active = True
+    db.commit()
+
 
     # Seed test operator/user accounts for testing
     test_accounts = [
