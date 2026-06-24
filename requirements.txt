@@ -9,5 +9,3 @@ python-jose[cryptography]
 python-multipart
 alembic
 email-validator
-opencv-python-headless
-numpy
