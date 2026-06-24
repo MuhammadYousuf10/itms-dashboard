@@ -97,7 +97,7 @@ import os
 import shutil
 import uuid
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "/tmp/uploads" if os.environ.get("VERCEL") else "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/upload")

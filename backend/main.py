@@ -11,7 +11,8 @@ from fastapi.staticfiles import StaticFiles
 import os
 
 # Create uploads directory if it doesn't exist
-os.makedirs("uploads", exist_ok=True)
+UPLOAD_DIR = "/tmp/uploads" if os.environ.get("VERCEL") else "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Configure CORS for the React frontend
 app.add_middleware(
@@ -49,4 +50,4 @@ app.include_router(citizen.router, prefix="/api/citizen", tags=["citizen"])
 app.include_router(websockets.router, prefix="/ws", tags=["websockets"])
 
 # Mount static files for uploads
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")

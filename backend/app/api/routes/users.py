@@ -75,11 +75,12 @@ def upload_avatar(
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
         
-    os.makedirs("uploads/avatars", exist_ok=True)
+    upload_dir = "/tmp/uploads/avatars" if os.environ.get("VERCEL") else "uploads/avatars"
+    os.makedirs(upload_dir, exist_ok=True)
     
     file_ext = file.filename.split('.')[-1]
     filename = f"{current_user.id}.{file_ext}"
-    filepath = f"uploads/avatars/{filename}"
+    filepath = f"{upload_dir}/{filename}"
     
     with open(filepath, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
