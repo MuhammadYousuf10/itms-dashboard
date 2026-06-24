@@ -19,8 +19,8 @@ export default function Login() {
   const { control, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: 'admin@itms.gov',
-      password: 'admin123',
+      email: '',
+      password: '',
     },
   });
 
